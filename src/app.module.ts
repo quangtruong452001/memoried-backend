@@ -17,7 +17,7 @@ import entities from './database/entities';
       database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
       entities: entities,
-      // synchronize: true,
+      synchronize: true,
       ssl: {
         rejectUnauthorized: false,
       },
