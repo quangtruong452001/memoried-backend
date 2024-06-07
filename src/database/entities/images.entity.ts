@@ -4,15 +4,15 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Section } from './section.entity';
 
 @Entity()
 export class Images {
   @PrimaryColumn({ type: 'uuid' })
   image_id: number;
-
-  @Column({ nullable: false, type: 'uuid' })
-  section_id: string;
 
   @Column({ nullable: false })
   url: string;
@@ -28,4 +28,8 @@ export class Images {
 
   @Column({ nullable: false, type: 'uuid' })
   updatedBy: string;
+
+  @ManyToOne(() => Section, (section) => section.section_image)
+  @JoinColumn({ name: 'section_id' })
+  section: number;
 }

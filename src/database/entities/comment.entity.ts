@@ -4,7 +4,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Blog } from './blog.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Comment {
@@ -31,4 +35,12 @@ export class Comment {
 
   @Column({ nullable: false, type: 'uuid' })
   updatedBy: string;
+
+  @ManyToOne(() => Blog, (blog) => blog.blog_comment)
+  @JoinColumn({ name: 'blog_id' })
+  blog: number;
+
+  @ManyToOne(() => User, (user) => user.user_comment)
+  @JoinColumn({ name: 'user_id' })
+  user: number;
 }

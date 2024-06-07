@@ -4,7 +4,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Section } from './section.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Note {
@@ -25,4 +29,12 @@ export class Note {
 
   @Column({ nullable: false, type: 'uuid' })
   updatedBy: string;
+
+  @ManyToOne(() => Section, (section) => section.section_note)
+  @JoinColumn({ name: 'section_id' })
+  section: number;
+
+  @ManyToOne(() => User, (user) => user.user_note)
+  @JoinColumn({ name: 'user_id' })
+  user: number;
 }

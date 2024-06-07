@@ -9,6 +9,9 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Blog } from './blog.entity';
+import { Note } from './note.entity';
+import { Comment } from './comment.entity';
+import { UserTopic } from './UserTopic.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -53,7 +56,16 @@ export class User {
   updatedBy: string;
 
   @OneToMany(() => Blog, (blog) => blog.author)
-  user_id: 'uuid';
+  user_blog: 'uuid';
+
+  @OneToMany(() => Note, (note) => note.user)
+  user_note: 'uuid';
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  user_comment: 'uuid';
+
+  @OneToMany(() => UserTopic, (userTopic) => userTopic.user)
+  user_userTopic: 'uuid';
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

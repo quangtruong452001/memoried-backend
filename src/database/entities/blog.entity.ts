@@ -5,8 +5,13 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Section } from './section.entity';
+import { Comment } from './comment.entity';
+import { Topic } from './topic.entity';
 
 @Entity()
 export class Blog {
@@ -45,6 +50,17 @@ export class Blog {
   @Column({ nullable: false, type: 'uuid' })
   updatedBy: string;
 
-  @ManyToOne(() => User, (user) => user.user_id)
-  author: 'uuid';
+  @ManyToOne(() => User, (user) => user.user_blog)
+  @JoinColumn({ name: 'author_id' })
+  author: number;
+
+  @OneToMany(() => Section, (section) => section.blog)
+  blog_section: 'uuid';
+
+  @OneToMany(() => Comment, (comment) => comment.blog)
+  blog_comment: 'uuid';
+
+  @ManyToOne(() => Topic, (topic) => topic.topic_blog)
+  @JoinColumn({ name: 'topic_id' })
+  topic: number;
 }
