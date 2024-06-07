@@ -5,7 +5,10 @@ import {
   Index,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
+import { Blog } from './blog.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -47,7 +50,10 @@ export class User {
   createdBy: string;
 
   @Column({ nullable: false, type: 'uuid' })
-  UpdatedBy: string;
+  updatedBy: string;
+
+  @OneToMany(() => Blog, (blog) => blog.author)
+  user_id: 'uuid';
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

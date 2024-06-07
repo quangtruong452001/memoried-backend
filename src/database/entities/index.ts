@@ -1,3 +1,10 @@
 import { User } from './user.entity';
-const entities = [User];
+import { Blog } from './blog.entity';
+import { UserTopic } from './UserTopic.entity';
+import { Topic } from './topic.entity';
+import { Note } from './note.entity';
+import { Section } from './section.entity';
+import { Comment } from './comment.entity';
+import { Images } from './images.entity';
+const entities = [User, Blog, UserTopic, Topic, Note, Section, Comment, Images];
 export default entities;
