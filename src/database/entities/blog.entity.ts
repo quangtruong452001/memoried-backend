@@ -39,15 +39,19 @@ export class Blog extends AbstractEntity<Blog> {
   @Column({ nullable: false, type: 'uuid' })
   topic_id: string;
 
+  // @ManyToOne(() => User, (user) => user.user_blog)
+  // @JoinColumn({ name: 'author_id' })
+  // author: number;
+
   @ManyToOne(() => User, (user) => user.user_blog)
   @JoinColumn({ name: 'author_id' })
-  author: number;
+  author: User;
 
-  @OneToMany(() => Section, (section) => section.blog)
-  blog_section: 'uuid';
+  @OneToMany(() => Section, (section) => section.blog_id)
+  blog_section: Section[];
 
-  @OneToMany(() => Comment, (comment) => comment.blog)
-  blog_comment: 'uuid';
+  @OneToMany(() => Comment, (comment) => comment.blog_id)
+  blog_comment: Comment[];
 
   @ManyToOne(() => Topic, (topic) => topic.topic_blog)
   @JoinColumn({ name: 'topic_id' })
