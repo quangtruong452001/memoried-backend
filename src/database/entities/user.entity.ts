@@ -3,15 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Index,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
-  ManyToOne,
 } from 'typeorm';
 import { Blog } from './blog.entity';
 import { Note } from './note.entity';
 import { Comment } from './comment.entity';
 import { UserTopic } from './UserTopic.entity';
+import { AbstractEntity } from './abstract.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -19,7 +17,7 @@ export enum UserRole {
 }
 
 @Entity()
-export class User {
+export class User extends AbstractEntity<User> {
   @PrimaryGeneratedColumn('uuid', {
     name: 'user_id',
   })
@@ -43,18 +41,6 @@ export class User {
   })
   role: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
-
   @OneToMany(() => Blog, (blog) => blog.author)
   user_blog: 'uuid';
 
@@ -66,8 +52,4 @@ export class User {
 
   @OneToMany(() => UserTopic, (userTopic) => userTopic.user)
   user_userTopic: 'uuid';
-
-  constructor(partial: Partial<User>) {
-    Object.assign(this, partial);
-  }
 }

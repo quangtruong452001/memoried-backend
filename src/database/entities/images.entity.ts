@@ -1,33 +1,20 @@
 import {
   Entity,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
+  PrimaryGeneratedColumn,
   Column,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { Section } from './section.entity';
+import { AbstractEntity } from './abstract.entity';
 
 @Entity()
-export class Images {
-  @PrimaryColumn({ type: 'uuid' })
+export class Images extends AbstractEntity<Images> {
+  @PrimaryGeneratedColumn('uuid')
   image_id: number;
 
   @Column({ nullable: false })
   url: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
 
   @ManyToOne(() => Section, (section) => section.section_image)
   @JoinColumn({ name: 'section_id' })

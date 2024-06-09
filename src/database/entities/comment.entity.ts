@@ -1,18 +1,17 @@
 import {
   Entity,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
+  PrimaryGeneratedColumn,
   Column,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { Blog } from './blog.entity';
 import { User } from './user.entity';
+import { AbstractEntity } from './abstract.entity';
 
 @Entity()
-export class Comment {
-  @PrimaryColumn({ type: 'uuid' })
+export class Comment extends AbstractEntity<Comment> {
+  @PrimaryGeneratedColumn('uuid')
   comment_id: number;
 
   @Column({ nullable: false, type: 'uuid' })
@@ -23,18 +22,6 @@ export class Comment {
 
   @Column({ nullable: false })
   comment: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
 
   @ManyToOne(() => Blog, (blog) => blog.blog_comment)
   @JoinColumn({ name: 'blog_id' })

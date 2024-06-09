@@ -1,17 +1,11 @@
-import {
-  Entity,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Column,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { UserTopic } from './UserTopic.entity';
 import { Blog } from './blog.entity';
+import { AbstractEntity } from './abstract.entity';
 
 @Entity()
-export class Topic {
-  @PrimaryColumn({ type: 'uuid' })
+export class Topic extends AbstractEntity<Topic> {
+  @PrimaryGeneratedColumn('uuid')
   topic_id: number;
 
   @Column({
@@ -23,18 +17,6 @@ export class Topic {
 
   @Column({ nullable: false })
   topic_name: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
 
   @OneToMany(() => UserTopic, (userTopic) => userTopic.topic)
   topic_userTopic: string;

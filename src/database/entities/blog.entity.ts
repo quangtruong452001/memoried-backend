@@ -3,19 +3,20 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  CreateDateColumn,
-  UpdateDateColumn,
   JoinColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Section } from './section.entity';
 import { Comment } from './comment.entity';
 import { Topic } from './topic.entity';
+import { AbstractEntity } from './abstract.entity';
 
 @Entity()
-export class Blog {
-  @PrimaryGeneratedColumn()
+export class Blog extends AbstractEntity<Blog> {
+  @PrimaryGeneratedColumn('uuid')
+  @Index()
   blog_id: number;
 
   @Column({ nullable: false })
@@ -37,18 +38,6 @@ export class Blog {
 
   @Column({ nullable: false, type: 'uuid' })
   topic_id: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
 
   @ManyToOne(() => User, (user) => user.user_blog)
   @JoinColumn({ name: 'author_id' })

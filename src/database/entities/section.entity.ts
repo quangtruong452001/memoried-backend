@@ -1,8 +1,5 @@
 import {
   Entity,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   Column,
   OneToMany,
   Index,
@@ -13,9 +10,10 @@ import {
 import { Images } from './images.entity';
 import { Note } from './note.entity';
 import { Blog } from './blog.entity';
+import { AbstractEntity } from './abstract.entity';
 
 @Entity()
-export class Section {
+export class Section extends AbstractEntity<Section> {
   @PrimaryGeneratedColumn('uuid', {
     name: 'section_id',
   })
@@ -27,18 +25,6 @@ export class Section {
 
   @Column({ nullable: false })
   caption: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
 
   @OneToMany(() => Images, (images) => images.section)
   section_image: 'uuid';
