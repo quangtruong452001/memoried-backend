@@ -12,7 +12,7 @@ import { AbstractEntity } from './abstract.entity';
 @Entity()
 export class Comment extends AbstractEntity<Comment> {
   @PrimaryGeneratedColumn('uuid')
-  comment_id: number;
+  comment_id: string;
 
   @Column({ nullable: false, type: 'uuid' })
   user_id: string;

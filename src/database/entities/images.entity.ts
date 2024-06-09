@@ -11,7 +11,7 @@ import { AbstractEntity } from './abstract.entity';
 @Entity()
 export class Images extends AbstractEntity<Images> {
   @PrimaryGeneratedColumn('uuid')
-  image_id: number;
+  image_id: string;
 
   @Column({ nullable: false })
   url: string;

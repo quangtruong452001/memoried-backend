@@ -13,10 +13,10 @@ import { User } from './user.entity';
 @Entity()
 export class Note {
   @PrimaryColumn({ type: 'uuid' })
-  section_id: number;
+  section_id: string;
 
   @PrimaryColumn({ type: 'uuid' })
-  user_id: number;
+  user_id: string;
 
   @CreateDateColumn()
   createdAt: Date;

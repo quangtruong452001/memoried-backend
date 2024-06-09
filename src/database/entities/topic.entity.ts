@@ -6,7 +6,7 @@ import { AbstractEntity } from './abstract.entity';
 @Entity()
 export class Topic extends AbstractEntity<Topic> {
   @PrimaryGeneratedColumn('uuid')
-  topic_id: number;
+  topic_id: string;
 
   @Column({
     type: 'enum',

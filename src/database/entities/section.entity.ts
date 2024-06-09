@@ -18,7 +18,7 @@ export class Section extends AbstractEntity<Section> {
     name: 'section_id',
   })
   @Index()
-  id: number;
+  id: string;
 
   @Column({ nullable: false, type: 'uuid' })
   blog_id: string;

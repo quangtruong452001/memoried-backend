@@ -17,7 +17,7 @@ import { AbstractEntity } from './abstract.entity';
 export class Blog extends AbstractEntity<Blog> {
   @PrimaryGeneratedColumn('uuid')
   @Index()
-  blog_id: number;
+  blog_id: string;
 
   @Column({ nullable: false })
   title: string;

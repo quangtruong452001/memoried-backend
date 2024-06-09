@@ -22,9 +22,9 @@ export class User extends AbstractEntity<User> {
     name: 'user_id',
   })
   @Index()
-  id: number;
+  id: string;
 
-  @Column({ length: 30, nullable: false })
+  @Column({ length: 30, nullable: false, unique: true })
   username: string;
 
   @Column({ nullable: false })
@@ -40,6 +40,9 @@ export class User extends AbstractEntity<User> {
     nullable: false,
   })
   role: string;
+
+  @Column({ default: '' })
+  refreshTokenHashed: string;
 
   @OneToMany(() => Blog, (blog) => blog.author)
   user_blog: 'uuid';
