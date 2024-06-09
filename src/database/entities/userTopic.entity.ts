@@ -13,10 +13,10 @@ import { Topic } from './topic.entity';
 @Entity()
 export class UserTopic {
   @PrimaryColumn()
-  user_id: number;
+  user_id: string;
 
   @PrimaryColumn()
-  topic_id: number;
+  topic_id: string;
 
   @CreateDateColumn()
   createdAt: Date;
