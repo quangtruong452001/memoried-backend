@@ -26,7 +26,7 @@ export class Blog extends AbstractEntity<Blog> {
   description: string;
 
   @Column({ nullable: false })
-  thumpnail: string;
+  thumbnail: string;
 
   @Column({
     type: 'enum',
