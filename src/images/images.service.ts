@@ -5,6 +5,7 @@ import { Images } from 'src/database/entities/images.entity';
 import { UploadApiResponse, UploadApiErrorResponse, v2 } from 'cloudinary';
 import toStream = require('buffer-to-stream');
 import { ImageDTO } from 'src/database/dto/image.dto';
+import { Section } from 'src/database/entities/section.entity';
 
 @Injectable()
 export class ImagesService {
@@ -12,11 +13,23 @@ export class ImagesService {
     @InjectRepository(Images)
     private imageRepository: Repository<Images>,
     private manager: EntityManager,
+    @InjectRepository(Section)
+    private sectionRepository: Repository<Section>,
   ) {}
 
-  async createImage(image: ImageDTO) {
-    const newImage = new Images(image);
-    return await this.manager.save(newImage);
+  async createImage(imageDto: ImageDTO): Promise<Images> {
+    const section = await this.sectionRepository.findOne({
+      where: { id: imageDto.section_id },
+    });
+
+    if (!section) {
+      throw new Error('Section not found');
+    }
+    const newImage = new Images(imageDto);
+    newImage.url = imageDto.url;
+    newImage.section = section;
+
+    return await this.imageRepository.save(newImage);
   }
 
   async updateImage(image_id: string, image: Images) {
