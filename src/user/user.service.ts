@@ -14,10 +14,11 @@ export class UserService {
     private manager: EntityManager,
   ) {}
 
-  async createUser(user: CreateUserDto) {
-    const newUser = new User(user);
+  async createUser(userInput: CreateUserDto) {
+    const newUser = new User(userInput);
 
-    return await this.manager.save(newUser);
+    const user = await this.manager.save(newUser);
+    return user;
   }
 
   async getUserByUsername(username: string) {
@@ -33,6 +34,8 @@ export class UserService {
 
     userToUpdate = { ...userToUpdate, ...user };
 
-    return await this.manager.save(userToUpdate);
+    const updatedUser = await this.manager.save(User, userToUpdate);
+
+    return updatedUser;
   }
 }

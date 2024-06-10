@@ -5,7 +5,7 @@ export class CreateUserDto {
 }
 
 export class UserOptionalDto {
-  user_id?: string;
+  id?: string;
   username?: string;
   password?: string;
   avatar?: string;
