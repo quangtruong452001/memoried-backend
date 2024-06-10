@@ -29,10 +29,14 @@ export class AuthService {
     const newUser: UserOptionalDto = await this.userService.createUser({
       username: user.username,
       password: hashedPassword,
+      avatar: user.avatar ? user.avatar : null,
     });
 
     // Create a new token
-    const tokens = this.getToken(newUser.user_id, newUser.username);
+    const tokens = await this.getToken(newUser.id, newUser.username);
+
+    // Update the refresh token hash
+    await this.updateRefreshTokenHash(newUser.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -42,20 +46,23 @@ export class AuthService {
       username,
     };
 
-    const secret = this.configService.get('JWT_SECRET');
-
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret,
+        secret: this.configService.get('AT_SECRET'),
         expiresIn: '1h',
       }),
 
       this.jwtService.signAsync(payload, {
-        secret,
+        secret: this.configService.get('RT_SECRET'),
         expiresIn: '7d',
       }),
     ]);
 
     return { accessToken, refreshToken };
+  }
+
+  async updateRefreshTokenHash(user_id: string, rt: string) {
+    const hash = await argon.hash(rt);
+    await this.userService.updateUser(user_id, { refreshTokenHashed: hash });
   }
 }
