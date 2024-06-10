@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import entities from './database/entities';
+import { ImagesModule } from './images/images.module';
+import { SectionModule } from './section/section.module';
 
 @Module({
   imports: [
@@ -24,8 +26,10 @@ import entities from './database/entities';
         rejectUnauthorized: false,
       },
     }),
-    UserModule,
-    AuthModule,
+    // UserModule,
+    //AuthModule,
+    ImagesModule,
+    SectionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

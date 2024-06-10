@@ -7,10 +7,10 @@ export class AbstractEntity<T> {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: true, type: 'uuid' })
   createdBy: string;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: true, type: 'uuid' })
   updatedBy: string;
 
   constructor(entity: Partial<T>) {

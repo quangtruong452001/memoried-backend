@@ -20,19 +20,16 @@ export class Section extends AbstractEntity<Section> {
   @Index()
   id: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  blog_id: string;
+  @ManyToOne(() => Blog, (blog) => blog.blog_section)
+  @JoinColumn({ name: 'blog_id' })
+  blog: Blog;
 
   @Column({ nullable: false })
   caption: string;
 
   @OneToMany(() => Images, (images) => images.section)
-  section_image: 'uuid';
+  section_image: Images[];
 
   @OneToMany(() => Note, (note) => note.section)
   section_note: 'uuid';
-
-  @ManyToOne(() => Blog, (blog) => blog.blog_section)
-  @JoinColumn({ name: 'blog_id' })
-  blog: number;
 }
