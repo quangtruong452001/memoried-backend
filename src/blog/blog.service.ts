@@ -45,4 +45,17 @@ export class BlogService {
     blogToUpdate = { ...blogToUpdate, ...blog };
     return await this.manager.save(blogToUpdate);
   }
+
+  async deleteBlog(blog_id: string) {
+    const blog = await this.sectionRepository.findOne({
+      where: {
+        id: blog_id,
+      },
+    });
+    if (!blog) {
+      throw new Error('Blog not found');
+    }
+    blog.isDeleted = true;
+    return await this.manager.save(blog);
+  }
 }

@@ -6,6 +6,7 @@ import {
   Get,
   Body,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from './images.service';
@@ -26,5 +27,10 @@ export class ImagesController {
   @Get()
   getPicture(@Query('section_id') section_id: string) {
     return this.imagesService.getImagesBySectionId(section_id);
+  }
+
+  @Patch('delete')
+  deleteImage(@Query('image_id') image_id: string) {
+    return this.imagesService.deleteImage(image_id);
   }
 }

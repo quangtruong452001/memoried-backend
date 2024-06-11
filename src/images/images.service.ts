@@ -75,4 +75,17 @@ export class ImagesService {
       .getMany();
     return images.map((image) => image.url);
   }
+
+  async deleteImage(image_id: string) {
+    const image = await this.imageRepository.findOne({
+      where: {
+        id: image_id,
+      },
+    });
+    if (!image) {
+      throw new Error('Image not found');
+    }
+    image.isDeleted = true;
+    return await this.manager.save(image);
+  }
 }

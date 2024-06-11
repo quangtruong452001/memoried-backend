@@ -13,6 +13,9 @@ export class AbstractEntity<T> {
   @Column({ nullable: true, type: 'uuid' })
   updatedBy: string;
 
+  @Column({ nullable: true, type: 'boolean', default: false })
+  isDeleted: boolean;
+
   constructor(entity: Partial<T>) {
     Object.assign(this, entity);
   }

@@ -28,4 +28,9 @@ export class SectionController {
   ) {
     return this.sectionService.updateSection(section_id, section);
   }
+
+  @Patch('delete')
+  deleteSection(@Query('section_id') section_id: string) {
+    return this.sectionService.deleteSection(section_id);
+  }
 }

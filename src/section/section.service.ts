@@ -40,9 +40,20 @@ export class SectionService {
         id: section_id,
       },
     });
-
     sectionToUpdate = { ...sectionToUpdate, ...section };
-
     return await this.manager.save(sectionToUpdate);
+  }
+
+  async deleteSection(section_id: string) {
+    const section = await this.sectionRepository.findOne({
+      where: {
+        id: section_id,
+      },
+    });
+    if (!section) {
+      throw new Error('Image not found');
+    }
+    section.isDeleted = true;
+    return await this.manager.save(section);
   }
 }

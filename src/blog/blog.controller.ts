@@ -29,4 +29,9 @@ export class BlogController {
   getBlogs() {
     return this.blogService.getBlogs();
   }
+
+  @Patch('delete')
+  deleteBlog(@Query('blog_id') blog_id: string) {
+    return this.blogService.deleteBlog(blog_id);
+  }
 }
