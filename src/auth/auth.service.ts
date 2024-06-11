@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -26,7 +26,7 @@ export class AuthService {
     );
 
     if (existingUser) {
-      throw new Error('Username already exists');
+      throw new BadRequestException('Username already exists');
     }
 
     // Hash the password
