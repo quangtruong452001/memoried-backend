@@ -31,5 +31,5 @@ export class Section extends AbstractEntity<Section> {
   section_image: Images[];
 
   @OneToMany(() => Note, (note) => note.section)
-  section_note: 'uuid';
+  section_note: string;
 }

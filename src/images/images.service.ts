@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { Images } from 'src/database/entities/images.entity';
-import { UploadApiResponse, UploadApiErrorResponse, v2 } from 'cloudinary';
-import toStream = require('buffer-to-stream');
+import { v2 } from 'cloudinary';
+import toStream from 'buffer-to-stream';
 import { ImageDTO } from 'src/database/dto/image.dto';
 import { Section } from 'src/database/entities/section.entity';
 

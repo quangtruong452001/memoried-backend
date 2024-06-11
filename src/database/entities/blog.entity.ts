@@ -53,5 +53,5 @@ export class Blog extends AbstractEntity<Blog> {
 
   @ManyToOne(() => Topic, (topic) => topic.topic_blog)
   @JoinColumn({ name: 'topic_id' })
-  topic: number;
+  topic: string;
 }

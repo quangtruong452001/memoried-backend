@@ -22,5 +22,5 @@ export class Images extends AbstractEntity<Images> {
 
   @ManyToOne(() => Section, (section) => section.section_image)
   @JoinColumn({ name: 'section_id' })
-  section: Section;
+  section: string;
 }

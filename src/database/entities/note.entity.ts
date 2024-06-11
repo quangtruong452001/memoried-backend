@@ -32,9 +32,9 @@ export class Note {
 
   @ManyToOne(() => Section, (section) => section.section_note)
   @JoinColumn({ name: 'section_id' })
-  section: number;
+  section: Section;
 
   @ManyToOne(() => User, (user) => user.user_note)
   @JoinColumn({ name: 'user_id' })
-  user: number;
+  user: User;
 }
