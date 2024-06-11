@@ -15,9 +15,11 @@ import { AbstractEntity } from './abstract.entity';
 
 @Entity()
 export class Blog extends AbstractEntity<Blog> {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid', {
+    name: 'blog_id',
+  })
   @Index()
-  blog_id: string;
+  id: string;
 
   @Column({ nullable: false })
   title: string;
@@ -39,18 +41,14 @@ export class Blog extends AbstractEntity<Blog> {
   @Column({ nullable: false, type: 'uuid' })
   topic_id: string;
 
-  // @ManyToOne(() => User, (user) => user.user_blog)
-  // @JoinColumn({ name: 'author_id' })
-  // author: number;
-
   @ManyToOne(() => User, (user) => user.user_blog)
   @JoinColumn({ name: 'author_id' })
   author: User;
 
-  @OneToMany(() => Section, (section) => section.blog_id)
+  @OneToMany(() => Section, (section) => section.blog)
   blog_section: Section[];
 
-  @OneToMany(() => Comment, (comment) => comment.blog_id)
+  @OneToMany(() => Comment, (comment) => comment.blog)
   blog_comment: Comment[];
 
   @ManyToOne(() => Topic, (topic) => topic.topic_blog)
