@@ -31,11 +31,8 @@ export class UserService {
         id: user_id,
       },
     });
-
     userToUpdate = { ...userToUpdate, ...user };
-
     const updatedUser = await this.manager.save(User, userToUpdate);
-
     return updatedUser;
   }
 }

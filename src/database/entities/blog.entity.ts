@@ -34,16 +34,13 @@ export class Blog extends AbstractEntity<Blog> {
     type: 'enum',
     enum: ['company', 'team', 'project'],
     default: 'company',
-    nullable: false,
+    nullable: true,
   })
   type: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  topic_id: string;
-
   @ManyToOne(() => User, (user) => user.user_blog)
   @JoinColumn({ name: 'author_id' })
-  author: User;
+  author: string;
 
   @OneToMany(() => Section, (section) => section.blog)
   blog_section: Section[];
