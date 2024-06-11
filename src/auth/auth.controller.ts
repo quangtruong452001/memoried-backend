@@ -1,18 +1,35 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from 'src/database/dto';
 import { Response } from 'express';
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import { convertImageToBase64 } from 'src/utils';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signUp(@Body() dto: AuthDto, @Res() res: Response) {
+  @UseInterceptors(FileInterceptor('avatar'))
+  async signUp(
+    @Body() dto: AuthDto,
+    @UploadedFile() file: Express.Multer.File,
+    @Res() res: Response,
+  ) {
     if (!dto) {
       return 'Username and password are required.';
     }
-    const { accessToken, refreshToken } = await this.authService.signUp(dto);
+    const avatarBase64 = convertImageToBase64(file);
+    const { accessToken, refreshToken } = await this.authService.signUp(
+      dto,
+      avatarBase64,
+    );
     res.cookie('Authentication', accessToken, { httpOnly: true });
     res.cookie('Refresh', refreshToken, { httpOnly: true });
     res.send({

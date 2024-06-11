@@ -23,7 +23,7 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  async signUp(user: AuthDto) {
+  async signUp(user: AuthDto, avatar?: string) {
     // Check if the username already used
     const existingUser = await this.userService.getUserByUsername(
       user.username,
@@ -40,7 +40,7 @@ export class AuthService {
     const newUser: UserOptionalDto = await this.userService.createUser({
       username: user.username,
       password: hashedPassword,
-      avatar: defaultAvatar, // TODO: Add default avatar
+      avatar: avatar ? avatar : defaultAvatar, // TODO: Add default avatar
     });
 
     // Create a new token

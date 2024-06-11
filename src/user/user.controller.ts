@@ -3,8 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from 'src/database/dto';
 import { Body, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import mime from 'mime';
-
+import { convertImageToBase64 } from 'src/utils';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -16,9 +15,7 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
     @Body('user_id') user_id: string,
   ) {
-    const mimeType = mime.lookup(file.originalname);
-    const base64Prefix = `data:${mimeType};base64,`;
-    const avatarBase64 = base64Prefix + file.buffer.toString('base64');
+    const avatarBase64 = convertImageToBase64(file);
     createUserDto.avatar = avatarBase64;
     return this.userService.updateUser(user_id, createUserDto);
   }
