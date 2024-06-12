@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  HttpCode,
+  HttpStatus,
   Post,
   Res,
   UploadedFile,
@@ -17,6 +19,7 @@ export class AuthController {
 
   @Post('signup')
   @UseInterceptors(FileInterceptor('avatar'))
+  @HttpCode(HttpStatus.CREATED)
   async signUp(
     @Body() dto: AuthDto,
     @UploadedFile() file: Express.Multer.File,
@@ -34,13 +37,15 @@ export class AuthController {
     // res.cookie('Refresh', refreshToken, { httpOnly: true });
 
     const newUser = await this.authService.signUp(dto, avatarBase64);
-    res.send({
-      message: 'Sign Up Successful',
-      metadata: newUser,
-    });
+    if (newUser) {
+      res.send({
+        message: 'User created successfully',
+      });
+    }
   }
 
   @Post('signin')
+  @HttpCode(HttpStatus.OK)
   async signIn(@Body() dto: AuthDto) {
     if (!dto) {
       return 'Username and password are required.';
@@ -53,6 +58,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   async logOut() {
     return 'Sign Out';
   }
