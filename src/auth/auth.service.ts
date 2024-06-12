@@ -40,15 +40,17 @@ export class AuthService {
     const newUser: UserOptionalDto = await this.userService.createUser({
       username: user.username,
       password: hashedPassword,
-      avatar: avatar ? avatar : defaultAvatar, // TODO: Add default avatar
+      avatar: avatar ? avatar : defaultAvatar,
     });
 
     // Create a new token
-    const tokens = await this.getToken(newUser.id, newUser.username);
+    // const tokens = await this.getToken(newUser.id, newUser.username);
 
     // Update the refresh token hash
-    await this.updateRefreshTokenHash(newUser.id, tokens.refreshToken);
-    return tokens;
+    // await this.updateRefreshTokenHash(newUser.id, tokens.refreshToken);
+    // return tokens;
+
+    return newUser;
   }
 
   async signIn(user: AuthDto) {

@@ -26,16 +26,17 @@ export class AuthController {
       return 'Username and password are required.';
     }
     const avatarBase64 = convertImageToBase64(file);
-    const { accessToken, refreshToken } = await this.authService.signUp(
-      dto,
-      avatarBase64,
-    );
-    res.cookie('Authentication', accessToken, { httpOnly: true });
-    res.cookie('Refresh', refreshToken, { httpOnly: true });
+    // const { accessToken, refreshToken } = await this.authService.signUp(
+    //   dto,
+    //   avatarBase64,
+    // );
+    // res.cookie('Authentication', accessToken, { httpOnly: true });
+    // res.cookie('Refresh', refreshToken, { httpOnly: true });
+
+    const newUser = await this.authService.signUp(dto, avatarBase64);
     res.send({
       message: 'Sign Up Successful',
-      accessToken,
-      refreshToken,
+      metadata: newUser,
     });
   }
 
