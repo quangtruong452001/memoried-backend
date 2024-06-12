@@ -9,4 +9,4 @@ import { BlogController } from './blog.controller';
   providers: [BlogService],
   controllers: [BlogController],
 })
-export class SectionModule {}
+export class BlogModule {}

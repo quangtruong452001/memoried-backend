@@ -1,13 +1,17 @@
 import { Post, Body, Get, Patch, Controller, Query } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { BlogDTO } from 'src/database/dto/blog.dto';
+import { SectionDTO } from 'src/database/dto/section.dto';
 
 @Controller('blog')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
   @Post('create')
-  createBlog(@Body() blog: BlogDTO) {
-    return this.blogService.createBlog(blog);
+  createBlog(
+    @Body('blog') blog: BlogDTO,
+    @Body('section') section: SectionDTO[],
+  ) {
+    return this.blogService.createBlog(blog, section);
   }
 
   @Get('getbytype')

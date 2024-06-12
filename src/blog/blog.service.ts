@@ -1,8 +1,10 @@
+import { Section } from './../database/entities/section.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from 'src/database/entities/blog.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { BlogDTO } from 'src/database/dto/blog.dto';
+import { SectionDTO } from 'src/database/dto/section.dto';
 
 @Injectable()
 export class BlogService {
@@ -12,9 +14,11 @@ export class BlogService {
     private manager: EntityManager,
   ) {}
 
-  async createBlog(blogDTO: BlogDTO) {
+  async createBlog(blogDTO: BlogDTO, sectionData: SectionDTO[]) {
     const newBlog = new Blog(blogDTO);
-
+    newBlog.blog_section = sectionData.map((data) => {
+      return new Section(data);
+    });
     return await this.manager.save(newBlog);
   }
 

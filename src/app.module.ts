@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import entities from './database/entities';
 import { ImagesModule } from './images/images.module';
 import { SectionModule } from './section/section.module';
+import { BlogModule } from './blog/blog.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SectionModule } from './section/section.module';
     AuthModule,
     ImagesModule,
     SectionModule,
+    BlogModule,
   ],
   controllers: [AppController],
   providers: [AppService],
