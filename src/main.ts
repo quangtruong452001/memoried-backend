@@ -8,6 +8,9 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Enable cors
+  app.enableCors({});
+
   // Add cookie parser middleware
   app.use(cookieParser());
 
