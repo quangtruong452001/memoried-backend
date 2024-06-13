@@ -7,6 +7,7 @@ import {
   Body,
   Query,
   Patch,
+  Param,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from './images.service';

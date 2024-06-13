@@ -23,7 +23,9 @@ export class BlogService {
   }
 
   async getBlogById(blog_id: string) {
-    return await this.sectionRepository.findOne({ where: { id: blog_id } });
+    return await this.sectionRepository.findOne({
+      where: { id: blog_id, isDeleted: false },
+    });
   }
 
   async getBlogsByType(blog_type: string) {
@@ -37,7 +39,7 @@ export class BlogService {
   }
 
   async getBlogs() {
-    return await this.sectionRepository.find();
+    return await this.sectionRepository.find({ where: { isDeleted: false } });
   }
 
   async updateBlog(blog_id: string, blog: BlogDto) {

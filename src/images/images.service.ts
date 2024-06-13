@@ -71,6 +71,7 @@ export class ImagesService {
       .leftJoinAndSelect('image.section', 'section')
       .where('section.id = :sectionId', {
         sectionId: section_id,
+        isDeleted: false,
       })
       .getMany();
     return images.map((image) => image.url);

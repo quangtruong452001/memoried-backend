@@ -19,7 +19,9 @@ export class SectionService {
   }
 
   async getSectionById(section_id: string) {
-    return await this.sectionRepository.findOne({ where: { id: section_id } });
+    return await this.sectionRepository.findOne({
+      where: { id: section_id, isDeleted: true },
+    });
   }
 
   async getSectionsByBlogId(blog_id: string) {
@@ -28,6 +30,7 @@ export class SectionService {
       .leftJoinAndSelect('section.blog', 'blog')
       .where('blog.id = :blogId', {
         blogId: blog_id,
+        isDeleted: false,
       })
       .getMany();
 

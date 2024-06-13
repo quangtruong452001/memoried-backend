@@ -20,6 +20,7 @@ export class CommentService {
     return await this.commentRepository.find({
       where: {
         blog: blog_id,
+        isDeleted: false,
       },
     });
   }

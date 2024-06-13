@@ -17,13 +17,32 @@ export class NoteService {
     return await this.noteRepository.save(newNote);
   }
 
-  async getNotesBySectionId(user_Id: string): Promise<Note[]> {
-    return await this.noteRepository
+  async getNotesBySectionId(user_id: string): Promise<Note[]> {
+    const notes = await this.noteRepository
       .createQueryBuilder('note')
       .leftJoinAndSelect('note.user', 'user')
       .where('section.id = :sectionId', {
-        userId: user_Id,
+        userId: user_id,
+        isDeleted: false,
       })
       .getMany();
+
+    return notes;
+  }
+
+  async deleteNote(noteDto: NoteDto) {
+    const note = await this.noteRepository
+      .createQueryBuilder('note')
+      .leftJoinAndSelect('note.user', 'user')
+      .where('section.id = :sectionId , user.id = :userId', {
+        userId: noteDto.user_id,
+        sectionId: noteDto.section_id,
+      })
+      .getOne();
+    if (!note) {
+      throw new Error('Image not found');
+    }
+    note.isDeleted = true;
+    return await this.manager.save(note);
   }
 }

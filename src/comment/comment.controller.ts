@@ -1,4 +1,4 @@
-import { Controller, Get, Patch } from '@nestjs/common';
+import { Controller, Get, Patch, Query } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { Comment } from 'src/database/entities/comment.entity';
 import { Post, Body } from '@nestjs/common';
@@ -12,12 +12,12 @@ export class CommentController {
   }
 
   @Get('getbyblog')
-  getCommentsByBlogId(@Body() blog_id: string) {
+  getCommentsByBlogId(@Query() blog_id: string) {
     return this.commentService.getCommentsByBlogId(blog_id);
   }
 
   @Patch('delete')
-  deleteComment(@Body() comment_id: string) {
+  deleteComment(@Query() comment_id: string) {
     return this.commentService.deleteComment(comment_id);
   }
 }
