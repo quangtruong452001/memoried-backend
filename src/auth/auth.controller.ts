@@ -6,16 +6,13 @@ import {
   Post,
   Res,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
-  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from 'src/database/dto';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { convertImageToBase64 } from 'src/utils';
-import { AuthGuard } from '@nestjs/passport';
 import { Public } from 'src/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
 @Controller('auth')
