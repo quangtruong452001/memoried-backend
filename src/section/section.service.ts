@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { Section } from 'src/database/entities/section.entity';
-import { SectionDTO } from 'src/database/dto/section.dto';
+import { SectionDto } from 'src/database/dto/section.dto';
 
 @Injectable()
 export class SectionService {
@@ -12,7 +12,7 @@ export class SectionService {
     private manager: EntityManager,
   ) {}
 
-  async createSection(section: SectionDTO) {
+  async createSection(section: SectionDto) {
     const newSection = new Section(section);
 
     return await this.manager.save(newSection);

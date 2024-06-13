@@ -6,29 +6,19 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Section } from './section.entity';
 import { User } from './user.entity';
+import { AbstractEntity } from './abstract.entity';
 
 @Entity()
-export class Note {
+export class Note extends AbstractEntity<Section> {
   @PrimaryColumn({ type: 'uuid' })
   section_id: string;
 
   @PrimaryColumn({ type: 'uuid' })
   user_id: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
 
   @ManyToOne(() => Section, (section) => section.section_note)
   @JoinColumn({ name: 'section_id' })

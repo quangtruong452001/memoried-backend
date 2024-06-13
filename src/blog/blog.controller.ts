@@ -1,15 +1,15 @@
 import { Post, Body, Get, Patch, Controller, Query } from '@nestjs/common';
 import { BlogService } from './blog.service';
-import { BlogDTO } from 'src/database/dto/blog.dto';
-import { SectionDTO } from 'src/database/dto/section.dto';
+import { BlogDto } from 'src/database/dto/blog.dto';
+import { SectionDto } from 'src/database/dto/section.dto';
 
 @Controller('blog')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
   @Post('create')
   createBlog(
-    @Body('blog') blog: BlogDTO,
-    @Body('section') section: SectionDTO[],
+    @Body('blog') blog: BlogDto,
+    @Body('section') section: SectionDto[],
   ) {
     return this.blogService.createBlog(blog, section);
   }
@@ -25,7 +25,7 @@ export class BlogController {
   }
 
   @Patch('update')
-  updateBlog(@Query('blog_id') blog_id: string, @Body() blog: BlogDTO) {
+  updateBlog(@Query('blog_id') blog_id: string, @Body() blog: BlogDto) {
     return this.blogService.updateBlog(blog_id, blog);
   }
 

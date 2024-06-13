@@ -9,6 +9,7 @@ import entities from './database/entities';
 import { ImagesModule } from './images/images.module';
 import { SectionModule } from './section/section.module';
 import { BlogModule } from './blog/blog.module';
+import { NoteModule } from './note/note.module';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { BlogModule } from './blog/blog.module';
       database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
       entities: entities,
-      // synchronize: true,
+      synchronize: true,
       ssl: {
         rejectUnauthorized: false,
       },
@@ -32,6 +33,7 @@ import { BlogModule } from './blog/blog.module';
     ImagesModule,
     SectionModule,
     BlogModule,
+    NoteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

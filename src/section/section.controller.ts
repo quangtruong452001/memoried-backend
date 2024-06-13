@@ -1,13 +1,13 @@
 import { Post, Body, Get, Patch, Controller, Query } from '@nestjs/common';
 import { SectionService } from './section.service';
-import { SectionDTO } from 'src/database/dto/section.dto';
+import { SectionDto } from 'src/database/dto/section.dto';
 import { Section } from 'src/database/entities/section.entity';
 
 @Controller('section')
 export class SectionController {
   constructor(private readonly sectionService: SectionService) {}
   @Post()
-  createSection(@Body() section: SectionDTO) {
+  createSection(@Body() section: SectionDto) {
     return this.sectionService.createSection(section);
   }
 

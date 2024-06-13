@@ -4,7 +4,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { Images } from 'src/database/entities/images.entity';
 import { UploadApiResponse, UploadApiErrorResponse, v2 } from 'cloudinary';
 import toStream = require('buffer-to-stream');
-import { ImageDTO } from 'src/database/dto/image.dto';
+import { ImageDto } from 'src/database/dto/image.dto';
 import { Section } from 'src/database/entities/section.entity';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class ImagesService {
     private sectionRepository: Repository<Section>,
   ) {}
 
-  async createImage(imageDto: ImageDTO): Promise<Images> {
+  async createImage(imageDto: ImageDto): Promise<Images> {
     const section = await this.sectionRepository.findOne({
       where: { id: imageDto.section_id },
     });
@@ -53,7 +53,7 @@ export class ImagesService {
       return new Promise<string>((resolve, reject) => {
         const upload = v2.uploader.upload_stream((error, result) => {
           if (error) return reject(error);
-          var image = new ImageDTO();
+          var image = new ImageDto();
           image.url = result.url;
           image.section_id = section_id;
           this.createImage(image);

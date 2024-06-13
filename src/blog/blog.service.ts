@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from 'src/database/entities/blog.entity';
 import { EntityManager, Repository } from 'typeorm';
-import { BlogDTO } from 'src/database/dto/blog.dto';
-import { SectionDTO } from 'src/database/dto/section.dto';
+import { BlogDto } from 'src/database/dto/blog.dto';
+import { SectionDto } from 'src/database/dto/section.dto';
 
 @Injectable()
 export class BlogService {
@@ -14,7 +14,7 @@ export class BlogService {
     private manager: EntityManager,
   ) {}
 
-  async createBlog(blogDTO: BlogDTO, sectionData: SectionDTO[]) {
+  async createBlog(blogDTO: BlogDto, sectionData: SectionDto[]) {
     const newBlog = new Blog(blogDTO);
     newBlog.blog_section = sectionData.map((data) => {
       return new Section(data);
@@ -40,7 +40,7 @@ export class BlogService {
     return await this.sectionRepository.find();
   }
 
-  async updateBlog(blog_id: string, blog: BlogDTO) {
+  async updateBlog(blog_id: string, blog: BlogDto) {
     let blogToUpdate = await this.sectionRepository.findOne({
       where: {
         id: blog_id,
