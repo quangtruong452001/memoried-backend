@@ -10,6 +10,8 @@ import { ImagesModule } from './images/images.module';
 import { SectionModule } from './section/section.module';
 import { BlogModule } from './blog/blog.module';
 import { NoteModule } from './note/note.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from './auth/guard';
 
 @Module({
   imports: [
@@ -36,6 +38,12 @@ import { NoteModule } from './note/note.module';
     NoteModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+  ],
 })
 export class AppModule {}

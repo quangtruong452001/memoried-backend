@@ -25,13 +25,17 @@ export class UserService {
     return await this.userRepository.findOne({ where: { username } });
   }
 
-  async updateUser(user_id: string, user: UserOptionalDto) {
+  async getUserById(id: string) {
+    return await this.userRepository.findOne({ where: { id } });
+  }
+
+  async updateUser(user_id: string, userInfo: UserOptionalDto) {
     let userToUpdate = await this.userRepository.findOne({
       where: {
         id: user_id,
       },
     });
-    userToUpdate = { ...userToUpdate, ...user };
+    userToUpdate = { ...userToUpdate, ...userInfo };
     const updatedUser = await this.manager.save(User, userToUpdate);
     return updatedUser;
   }

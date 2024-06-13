@@ -11,11 +11,13 @@ export class AccessTokenStrategy extends PassportStrategy(
   constructor(private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get('AT_SECRET'),
+      secretOrKey: configService.get<string>('AT_SECRET'),
     });
   }
 
   async validate(payload: any) {
-    return payload;
+    return {
+      ...payload,
+    };
   }
 }

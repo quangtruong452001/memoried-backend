@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
@@ -60,7 +61,7 @@ export class AuthService {
     );
 
     if (!existingUser) {
-      throw new ForbiddenException('User not found');
+      throw new BadRequestException('User not registered');
     }
 
     // Check if the password is correct
@@ -77,6 +78,43 @@ export class AuthService {
 
     // Update the refresh token hash
     await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
+    return tokens;
+  }
+
+  async logOut(user_id: string) {
+    const logoutUser = await this.userService.updateUser(user_id, {
+      refreshTokenHashed: '',
+    });
+    if (logoutUser) {
+      return logoutUser;
+    }
+  }
+
+  async handleRefreshToken(userId: string, refreshToken: string) {
+    // Check if the user exists
+    const existingUser = await this.userService.getUserById(userId);
+
+    if (!existingUser) {
+      throw new BadRequestException('User not registered');
+    }
+
+    // Check if the refresh token is correct
+    const rtMatched = await argon.verify(
+      existingUser.refreshTokenHashed,
+      refreshToken,
+    );
+
+    // If the refresh token is incorrect throw an error
+    if (!rtMatched) {
+      throw new ForbiddenException('Incorrect refresh token');
+    }
+
+    // Create a new token
+    const tokens = await this.getToken(existingUser.id, existingUser.username);
+
+    // Update the refresh token hash
+    await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
+
     return tokens;
   }
 
