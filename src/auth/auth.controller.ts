@@ -1,3 +1,4 @@
+import { GetCurrentUserInfo } from './../decorators/getCurrentUserInfo.decorator';
 import {
   Body,
   Controller,
@@ -6,6 +7,7 @@ import {
   Post,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -15,6 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { convertImageToBase64 } from 'src/utils';
 import { Public } from 'src/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
+import { RefreshTokenGuard } from './guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -93,8 +96,14 @@ export class AuthController {
     }
   }
 
+  @Public()
+  @UseGuards(RefreshTokenGuard)
   @Post('refresh')
-  async refreshToken() {
-    return 'Refresh Token';
+  @HttpCode(HttpStatus.OK)
+  async refreshToken(
+    @GetCurrentUserId() userId: string,
+    @GetCurrentUserInfo('refreshToken') refreshToken: string,
+  ) {
+    return await this.authService.handleRefreshToken(userId, refreshToken);
   }
 }

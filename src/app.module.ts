@@ -27,7 +27,7 @@ import { UserTopicModule } from './user-topic/user-topic.module';
       database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
       entities: entities,
-      synchronize: true,
+      // synchronize: true,
       ssl: {
         rejectUnauthorized: false,
       },
