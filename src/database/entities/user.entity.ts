@@ -45,14 +45,14 @@ export class User extends AbstractEntity<User> {
   refreshTokenHashed: string;
 
   @OneToMany(() => Blog, (blog) => blog.author)
-  user_blog: 'uuid';
+  user_blog: Blog[];
 
   @OneToMany(() => Note, (note) => note.user)
-  user_note: 'uuid';
+  user_note: Note[];
 
   @OneToMany(() => Comment, (comment) => comment.user)
-  user_comment: 'uuid';
+  user_comment: Comment[];
 
   @OneToMany(() => UserTopic, (userTopic) => userTopic.user)
-  user_userTopic: 'uuid';
+  user_userTopic: UserTopic[];
 }

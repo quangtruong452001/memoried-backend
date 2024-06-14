@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from './images.service';
+import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
 
 @Controller('images')
 export class ImagesController {
@@ -21,8 +22,9 @@ export class ImagesController {
   uploadImage(
     @UploadedFiles() files: Express.Multer.File[],
     @Body('section_id') section_id: string,
+    @GetCurrentUserId() current_user_id: string,
   ) {
-    return this.imagesService.uploadImage(files, section_id);
+    return this.imagesService.uploadImage(files, section_id, current_user_id);
   }
 
   @Get()

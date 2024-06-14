@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CommentDto } from 'src/database/dto/comment.dto';
 import { Comment } from 'src/database/entities/comment.entity';
 import { Repository, EntityManager } from 'typeorm';
 
@@ -11,9 +12,11 @@ export class CommentService {
     private manager: EntityManager,
   ) {}
 
-  async createComment(comment: Comment) {
+  async createComment(comment: CommentDto, current_user_id: string) {
     const newComment = new Comment(comment);
-    return await this.manager.save(newComment);
+    newComment.createdBy = current_user_id;
+    newComment.updatedBy = current_user_id;
+    return await this.commentRepository.save(newComment);
   }
 
   async getCommentsByBlogId(blog_id: string) {
@@ -23,6 +26,21 @@ export class CommentService {
         isDeleted: false,
       },
     });
+  }
+
+  async updateComment(
+    comment_id: string,
+    comment: CommentDto,
+    current_user_id: string,
+  ) {
+    let commentToUpdate = await this.commentRepository.findOne({
+      where: {
+        id: comment_id,
+      },
+    });
+    commentToUpdate = { ...commentToUpdate, ...comment };
+    commentToUpdate.updatedBy = current_user_id;
+    return await this.commentRepository.save(commentToUpdate);
   }
 
   async deleteComment(comment_id: string) {

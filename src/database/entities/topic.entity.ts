@@ -1,12 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  Index,
+} from 'typeorm';
 import { UserTopic } from './UserTopic.entity';
 import { Blog } from './blog.entity';
 import { AbstractEntity } from './abstract.entity';
 
 @Entity()
 export class Topic extends AbstractEntity<Topic> {
-  @PrimaryGeneratedColumn('uuid')
-  topic_id: string;
+  @PrimaryGeneratedColumn('uuid', {
+    name: 'topic_id',
+  })
+  @Index()
+  id: string;
 
   @Column({
     type: 'enum',
@@ -19,8 +28,8 @@ export class Topic extends AbstractEntity<Topic> {
   topic_name: string;
 
   @OneToMany(() => UserTopic, (userTopic) => userTopic.topic)
-  topic_userTopic: string;
+  topic_userTopic: UserTopic[];
 
   @OneToMany(() => Blog, (blog) => blog.topic)
-  topic_blog: string;
+  topic_blog: Blog[];
 }

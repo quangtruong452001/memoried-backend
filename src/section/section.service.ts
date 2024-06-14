@@ -12,9 +12,10 @@ export class SectionService {
     private manager: EntityManager,
   ) {}
 
-  async createSection(section: SectionDto) {
+  async createSection(section: SectionDto, current_user_id: string) {
     const newSection = new Section(section);
-
+    newSection.createdBy = current_user_id;
+    newSection.updatedBy = current_user_id;
     return await this.manager.save(newSection);
   }
 
@@ -37,14 +38,19 @@ export class SectionService {
     return sections;
   }
 
-  async updateSection(section_id: string, section: Section) {
+  async updateSection(
+    section_id: string,
+    section: SectionDto,
+    current_user_id: string,
+  ) {
     let sectionToUpdate = await this.sectionRepository.findOne({
       where: {
         id: section_id,
       },
     });
     sectionToUpdate = { ...sectionToUpdate, ...section };
-    return await this.manager.save(sectionToUpdate);
+    sectionToUpdate.updatedBy = current_user_id;
+    return await this.sectionRepository.save(sectionToUpdate);
   }
 
   async deleteSection(section_id: string) {

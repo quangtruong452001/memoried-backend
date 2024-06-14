@@ -22,9 +22,9 @@ export class Note extends AbstractEntity<Section> {
 
   @ManyToOne(() => Section, (section) => section.section_note)
   @JoinColumn({ name: 'section_id' })
-  section: Section;
+  section: string;
 
   @ManyToOne(() => User, (user) => user.user_note)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: string;
 }

@@ -13,38 +13,22 @@ export class ImagesService {
     @InjectRepository(Images)
     private imageRepository: Repository<Images>,
     private manager: EntityManager,
-    @InjectRepository(Section)
-    private sectionRepository: Repository<Section>,
   ) {}
 
-  async createImage(imageDto: ImageDto): Promise<Images> {
-    const section = await this.sectionRepository.findOne({
-      where: { id: imageDto.section_id },
-    });
-
-    if (!section) {
-      throw new Error('Section not found');
-    }
+  async createImage(
+    imageDto: ImageDto,
+    current_user_id: string,
+  ): Promise<Images> {
     const newImage = new Images(imageDto);
-    newImage.url = imageDto.url;
-    newImage.section = imageDto.section_id;
-
+    newImage.createdBy = current_user_id;
+    newImage.updatedBy = current_user_id;
     return await this.imageRepository.save(newImage);
-  }
-
-  async updateImage(image_id: string, image: Images) {
-    let imageToUpdate = await this.imageRepository.findOne({
-      where: {
-        id: image_id,
-      },
-    });
-    imageToUpdate = { ...imageToUpdate, ...image };
-    return await this.manager.save(imageToUpdate);
   }
 
   async uploadImage(
     files: Express.Multer.File[],
     section_id: string,
+    current_user_id: string,
   ): Promise<string[]> {
     if (!files || !Array.isArray(files)) {
       throw new Error('No files provided or files is not an array.');
@@ -55,8 +39,8 @@ export class ImagesService {
           if (error) return reject(error);
           var image = new ImageDto();
           image.url = result.url;
-          image.section_id = section_id;
-          this.createImage(image);
+          image.section = section_id;
+          this.createImage(image, current_user_id);
           resolve('Image uploaded successfully');
         });
         toStream(file.buffer).pipe(upload);

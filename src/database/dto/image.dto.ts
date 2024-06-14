@@ -1,4 +1,11 @@
+import { IsUrl, IsNotEmpty, IsUUID } from 'class-validator';
+
 export class ImageDto {
+  @IsUrl()
+  @IsNotEmpty()
   url: string;
-  section_id: string;
+
+  @IsNotEmpty()
+  @IsUUID()
+  section: string;
 }

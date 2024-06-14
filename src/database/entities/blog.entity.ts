@@ -42,7 +42,7 @@ export class Blog extends AbstractEntity<Blog> {
   @JoinColumn({ name: 'author_id' })
   author: string;
 
-  @OneToMany(() => Section, (section) => section.blog, { cascade: true })
+  @OneToMany(() => Section, (section) => section.blog)
   blog_section: Section[];
 
   @OneToMany(() => Comment, (comment) => comment.blog)

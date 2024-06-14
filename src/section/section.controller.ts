@@ -1,14 +1,25 @@
-import { Post, Body, Get, Patch, Controller, Query } from '@nestjs/common';
+import {
+  Post,
+  Body,
+  Get,
+  Patch,
+  Controller,
+  Query,
+  ValidationPipe,
+} from '@nestjs/common';
 import { SectionService } from './section.service';
 import { SectionDto } from 'src/database/dto/section.dto';
-import { Section } from 'src/database/entities/section.entity';
+import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
 
 @Controller('section')
 export class SectionController {
   constructor(private readonly sectionService: SectionService) {}
   @Post()
-  createSection(@Body() section: SectionDto) {
-    return this.sectionService.createSection(section);
+  createSection(
+    @Body(new ValidationPipe({ transform: true })) section: SectionDto,
+    @GetCurrentUserId() current_user_id: string,
+  ) {
+    return this.sectionService.createSection(section, current_user_id);
   }
 
   @Get()
@@ -24,9 +35,14 @@ export class SectionController {
   @Patch()
   updateSection(
     @Query('section_id') section_id: string,
-    @Body() section: Section,
+    @Body(new ValidationPipe({ transform: true })) section: SectionDto,
+    @GetCurrentUserId() current_user_id: string,
   ) {
-    return this.sectionService.updateSection(section_id, section);
+    return this.sectionService.updateSection(
+      section_id,
+      section,
+      current_user_id,
+    );
   }
 
   @Patch('delete')

@@ -9,32 +9,21 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Topic } from './topic.entity';
+import { AbstractEntity } from './abstract.entity';
 
 @Entity()
-export class UserTopic {
-  @PrimaryColumn()
+export class UserTopic extends AbstractEntity<UserTopic> {
+  @PrimaryColumn({ type: 'uuid' })
   user_id: string;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'uuid' })
   topic_id: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
 
   @ManyToOne(() => User, (user) => user.user_userTopic)
   @JoinColumn({ name: 'user_id' })
-  user: number;
+  user: string;
 
   @ManyToOne(() => Topic, (topic) => topic.topic_userTopic)
   @JoinColumn({ name: 'topic_id' })
-  topic: number;
+  topic: string;
 }

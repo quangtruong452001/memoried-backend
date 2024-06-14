@@ -12,6 +12,8 @@ import { BlogModule } from './blog/blog.module';
 import { NoteModule } from './note/note.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guard';
+import { TopicModule } from './topic/topic.module';
+import { UserTopicModule } from './user-topic/user-topic.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { AccessTokenGuard } from './auth/guard';
     SectionModule,
     BlogModule,
     NoteModule,
+    TopicModule,
+    UserTopicModule,
   ],
   controllers: [AppController],
   providers: [
