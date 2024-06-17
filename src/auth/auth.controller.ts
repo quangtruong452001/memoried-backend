@@ -9,6 +9,7 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from 'src/database/dto';
@@ -79,13 +80,17 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logOut(@GetCurrentUserId() userId: string) {
+  async logOut(@Headers('authorization') authHeader: string) {
     // Check user id
-    if (!userId) {
-      return 'User id is required';
+    if (!authHeader) {
+      return { message: 'Authorization header is required' };
+    }
+    const accessToken = authHeader.split(' ')[1]; // Assuming the token is in the "Authorization" header as "Bearer TOKEN"
+    if (!accessToken) {
+      return { message: 'Access token is required' };
     }
 
-    const userLogout = await this.authService.logOut(userId);
+    const userLogout = await this.authService.logOut(accessToken);
     if (userLogout) {
       return {
         message: 'User logged out',
@@ -93,6 +98,8 @@ export class AuthController {
         //   userLogout,
         // },
       };
+    } else {
+      return { message: 'Logout failed' };
     }
   }
 
