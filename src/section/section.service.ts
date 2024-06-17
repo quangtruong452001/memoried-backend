@@ -65,4 +65,21 @@ export class SectionService {
     section.isDeleted = true;
     return await this.manager.save(section);
   }
+
+  async deleteSectionsByBlogId(blog_id: string) {
+    const sections = await this.sectionRepository
+      .createQueryBuilder('section')
+      .leftJoinAndSelect('section.blog', 'blog')
+      .where('blog.id = :blogId', {
+        blogId: blog_id,
+      })
+      .getMany();
+    if (!sections) {
+      throw new Error('Sections not found');
+    }
+    sections.forEach((section) => {
+      section.isDeleted = true;
+    });
+    return await this.manager.save(sections);
+  }
 }
