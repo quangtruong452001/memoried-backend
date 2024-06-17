@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
@@ -144,7 +143,7 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('AT_SECRET'),
-        expiresIn: '1h',
+        expiresIn: '1d',
       }),
 
       this.jwtService.signAsync(payload, {

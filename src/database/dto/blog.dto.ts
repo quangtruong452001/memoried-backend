@@ -1,4 +1,17 @@
-import { IsString, IsUUID, Length, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsUUID,
+  Length,
+  IsNotEmpty,
+  IsEnum,
+  ValidateIf,
+} from 'class-validator';
+
+export enum BlogType {
+  TEAM = 'team',
+  PROJECT = 'project',
+  COMPANY = 'company',
+}
 
 export class BlogDto {
   @IsString()
@@ -7,8 +20,9 @@ export class BlogDto {
   title: string;
 
   @IsString()
-  @Length(5, 20)
-  type: string;
+  @IsNotEmpty()
+  @IsEnum(BlogType)
+  type: BlogType;
 
   @IsString()
   @Length(5, 155)
@@ -20,6 +34,8 @@ export class BlogDto {
   @IsUUID()
   author: string;
 
+  @ValidateIf((o) => o.type === BlogType.PROJECT || o.type === BlogType.TEAM)
+  @IsNotEmpty()
   @IsUUID()
   topic_id: string;
 }

@@ -1,12 +1,4 @@
-import {
-  Entity,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 import { Topic } from './topic.entity';
 import { AbstractEntity } from './abstract.entity';

@@ -55,4 +55,13 @@ export class UserTopicService {
     userTopic.isDeleted = true;
     return await this.userTopicRepository.save(userTopic);
   }
+
+  async getTopicsOfUser(userId: string, type: string) {
+    return await this.userTopicRepository
+      .createQueryBuilder('userTopic')
+      .where('userTopic.user_id = :userId', { userId }) // Filtering by user ID
+      .leftJoinAndSelect('userTopic.topic', 'topic') // Correctly joining with the 'topic' relation
+      .andWhere('topic.type = :type', { type }) // Filtering topics by type
+      .getMany();
+  }
 }

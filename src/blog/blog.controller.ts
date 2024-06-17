@@ -6,9 +6,10 @@ import {
   Controller,
   Query,
   ValidationPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
-import { BlogDto } from 'src/database/dto/blog.dto';
+import { BlogDto, BlogType } from 'src/database/dto/blog.dto';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
 
 @Controller('blog')
@@ -23,8 +24,18 @@ export class BlogController {
   }
 
   @Get()
-  getBlogs() {
-    return this.blogService.getBlogs();
+  getBlogs(
+    @GetCurrentUserId() user_id: string,
+    @Query('type') type: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    // Return error if not have type, page or limit
+    if (!type) {
+      return new BadRequestException('Missing required query parameters');
+    }
+    const blogType = type as BlogType;
+    return this.blogService.getBlogs(blogType, page, limit, user_id);
   }
 
   @Get('getbytype')
