@@ -81,12 +81,29 @@ export class AuthService {
     return tokens;
   }
 
-  async logOut(user_id: string) {
-    const logoutUser = await this.userService.updateUser(user_id, {
-      refreshTokenHashed: '',
-    });
-    if (logoutUser) {
-      return logoutUser;
+  async logOut(accessToken: string) {
+    try {
+      const decodedToken = this.jwtService.verify(accessToken); // Verify and decode the JWT
+      const userId = decodedToken.user_id;
+
+      // Check if token has expired
+      if (decodedToken.exp && Date.now() >= decodedToken.exp * 1000) {
+        throw new Error('Token has expired');
+      }
+
+      // Update the refreshTokenHashed field in the database
+      const logoutUser = await this.userService.updateUser(userId, {
+        refreshTokenHashed: '',
+      });
+
+      if (logoutUser) {
+        return logoutUser;
+      } else {
+        throw new Error('User not found or unable to update');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error.message);
+      throw new Error('Invalid token or unable to log out');
     }
   }
 
