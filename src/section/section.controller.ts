@@ -49,4 +49,9 @@ export class SectionController {
   deleteSection(@Query('section_id') section_id: string) {
     return this.sectionService.deleteSection(section_id);
   }
+
+  @Patch('delete')
+  deleteSectionsByBlogId(@Query('blog_id') blog_id: string) {
+    return this.sectionService.deleteSection(blog_id);
+  }
 }
