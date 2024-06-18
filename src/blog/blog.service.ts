@@ -76,6 +76,7 @@ export class BlogService {
       // Get all blog that belong to the topics
       const blogs = await this.blogRepository
         .createQueryBuilder('blog')
+        .leftJoinAndSelect('blog.topic', 'topic')
         .where('blog.type = :type', {
           type: BlogType.TEAM,
           isDeleted: false,
