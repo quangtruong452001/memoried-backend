@@ -33,8 +33,9 @@ export class SectionService {
         blogId: blog_id,
         isDeleted: false,
       })
-      .orderBy('section.createAt', 'ASC')
+      .orderBy('section.createdAt', 'ASC')
       .getMany();
+    console.log(sections);
 
     return sections;
   }
