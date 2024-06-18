@@ -39,3 +39,12 @@ export class BlogDto {
   @IsUUID()
   topic_id: string;
 }
+export class CreateBlogDto {
+  title: string;
+
+  type: BlogType;
+
+  description: string;
+
+  topic_id: string;
+}

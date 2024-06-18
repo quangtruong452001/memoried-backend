@@ -7,21 +7,38 @@ import {
   Query,
   ValidationPipe,
   BadRequestException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
-import { BlogDto, BlogType } from 'src/database/dto/blog.dto';
+import { BlogDto, BlogType, CreateBlogDto } from 'src/database/dto/blog.dto';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
-import { getInfoData } from 'src/utils';
+import { convertImageToBase64, getInfoData } from 'src/utils';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('blog')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
   @Post('create')
+  @UseInterceptors(FileInterceptor('thumbnail'))
   createBlog(
-    @Body(new ValidationPipe({ transform: true })) blog: BlogDto,
+    @Body(new ValidationPipe({ transform: true })) blog: CreateBlogDto,
+    @UploadedFile() file: Express.Multer.File,
     @GetCurrentUserId() current_user_id: string,
   ) {
-    return this.blogService.createBlog(blog, current_user_id);
+    if (!blog) {
+      return 'Blog Information is required.';
+    }
+    let avatarBase64 = null;
+    if (file) {
+      avatarBase64 = convertImageToBase64(file);
+    }
+    const blogDto: BlogDto = {
+      author: current_user_id,
+      ...blog,
+      thumbnail: avatarBase64,
+    };
+    return this.blogService.createBlog(blogDto, current_user_id);
   }
 
   @Get()
