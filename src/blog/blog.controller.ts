@@ -43,19 +43,21 @@ export class BlogController {
       user_id,
     );
 
-    return blogs.map((blog) => {
-      return getInfoData({
-        fields: [
-          'id',
-          'title',
-          'description',
-          'thumbnail',
-          'type',
-          'createdAt',
-        ],
-        object: blog,
-      });
-    });
+    // return blogs.map((blog) => {
+    //   return getInfoData({
+    //     fields: [
+    //       'id',
+    //       'title',
+    //       'description',
+    //       'thumbnail',
+    //       'type',
+    //       'topic',
+    //       'createdAt',
+    //     ],
+    //     object: blog,
+    //   });
+    // });
+    return blogs;
   }
 
   @Get('getbytype')
