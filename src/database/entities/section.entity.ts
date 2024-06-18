@@ -32,4 +32,10 @@ export class Section extends AbstractEntity<Section> {
 
   @OneToMany(() => Note, (note) => note.section)
   section_note: Note[];
+
+  @Column({ nullable: false, type: 'uuid' })
+  createdBy: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  updatedBy: string;
 }

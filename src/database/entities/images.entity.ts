@@ -23,4 +23,10 @@ export class Images extends AbstractEntity<Images> {
   @ManyToOne(() => Section, (section) => section.section_image)
   @JoinColumn({ name: 'section_id' })
   section: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  createdBy: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  updatedBy: string;
 }

@@ -32,4 +32,10 @@ export class Topic extends AbstractEntity<Topic> {
 
   @OneToMany(() => Blog, (blog) => blog.topic)
   topic_blog: Blog[];
+
+  @Column({ nullable: false, type: 'uuid' })
+  createdBy: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  updatedBy: string;
 }

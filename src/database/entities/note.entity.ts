@@ -27,4 +27,10 @@ export class Note extends AbstractEntity<Section> {
   @ManyToOne(() => User, (user) => user.user_note)
   @JoinColumn({ name: 'user_id' })
   user: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  createdBy: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  updatedBy: string;
 }
