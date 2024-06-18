@@ -33,6 +33,7 @@ export class SectionService {
         blogId: blog_id,
         isDeleted: false,
       })
+      .orderBy('section.createAt', 'ASC')
       .getMany();
 
     return sections;
