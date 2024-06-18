@@ -64,4 +64,9 @@ export class UserTopicService {
       .andWhere('topic.type = :type', { type }) // Filtering topics by type
       .getMany();
   }
+  async getTopicsByUserId(userId: string) {
+    return await this.userTopicRepository.find({
+      where: { user_id: userId, isDeleted: false },
+    });
+  }
 }

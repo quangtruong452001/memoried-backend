@@ -1,4 +1,5 @@
-import { Repository, EntityManager } from 'typeorm';
+import { UserTopicService } from 'src/user-topic/user-topic.service';
+import { Repository, EntityManager, In } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Topic } from 'src/database/entities/topic.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +8,7 @@ import { TopicDto } from 'src/database/dto/topic.dto';
 @Injectable()
 export class TopicService {
   constructor(
+    private userTopicService: UserTopicService,
     @InjectRepository(Topic)
     private topicRepository: Repository<Topic>,
     private manager: EntityManager,
@@ -21,6 +23,13 @@ export class TopicService {
 
   async getTopics() {
     return await this.topicRepository.find({ where: { isDeleted: false } });
+  }
+
+  async getTopicByUserId(user_id: string) {
+    const topics = await this.userTopicService.getTopicsByUserId(user_id);
+    return await this.topicRepository.find({
+      where: { id: In(topics), isDeleted: false },
+    });
   }
 
   async updateTopic(

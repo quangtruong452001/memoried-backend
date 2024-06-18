@@ -25,7 +25,15 @@ export class UserTopicController {
   }
 
   @Get()
-  getUserTopicByUserId() {
-    return this.userTopicService.getUserTopics();
+  getUserTopicIdByUserId(@GetCurrentUserId() current_user_id: string) {
+    return this.userTopicService.getTopicsByUserId(current_user_id);
+  }
+
+  @Get('getbytype')
+  getUserTopicsByType(
+    @GetCurrentUserId() current_user_id: string,
+    @Body() type: string,
+  ) {
+    return this.userTopicService.getTopicsOfUser(current_user_id, type);
   }
 }
