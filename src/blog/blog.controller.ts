@@ -43,9 +43,18 @@ export class BlogController {
       user_id,
     );
 
-    return getInfoData({
-      fields: ['id', 'title', 'description', 'thumbnail', 'type', 'createdAt'],
-      object: blogs,
+    return blogs.map((blog) => {
+      return getInfoData({
+        fields: [
+          'id',
+          'title',
+          'description',
+          'thumbnail',
+          'type',
+          'createdAt',
+        ],
+        object: blog,
+      });
     });
   }
 
