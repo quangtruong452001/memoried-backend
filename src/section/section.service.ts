@@ -35,7 +35,6 @@ export class SectionService {
       })
       .orderBy('section.createdAt', 'ASC')
       .getMany();
-    console.log(sections);
 
     return sections;
   }
