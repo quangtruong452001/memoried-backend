@@ -27,8 +27,9 @@ export class TopicService {
 
   async getTopicByUserId(user_id: string) {
     const topics = await this.userTopicService.getTopicsByUserId(user_id);
+    const topicIds = topics.map((topic) => topic.topic_id);
     return await this.topicRepository.find({
-      where: { id: In(topics), isDeleted: false },
+      where: { id: In(topicIds), isDeleted: false },
     });
   }
 

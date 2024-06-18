@@ -27,6 +27,11 @@ export class TopicController {
     return this.topicService.getTopics();
   }
 
+  @Get('getbyuser')
+  getTopicByUserId(@GetCurrentUserId() user_id: string) {
+    return this.topicService.getTopicByUserId(user_id);
+  }
+
   @Patch('update')
   updateTopic(
     @Body(new ValidationPipe({ transform: true })) topicDto: TopicDto,
