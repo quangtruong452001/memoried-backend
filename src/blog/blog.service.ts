@@ -46,7 +46,7 @@ export class BlogService {
     if (type === BlogType.COMPANY) {
       const blogs = await this.blogRepository.find({
         // relations: ['author', 'blog_section', 'blog_comment', 'topic'],
-        // relations: ['author'],
+        // relations: ['topic'],
         where: {
           type: BlogType.COMPANY,
           isDeleted: false,
@@ -105,8 +105,22 @@ export class BlogService {
       }
 
       // Get all blog that belong to the topics
+      // const blogs = await this.blogRepository
+      //   .createQueryBuilder('blog')
+      //   .where('blog.type = :type', {
+      //     type: BlogType.PROJECT,
+      //     isDeleted: false,
+      //   })
+      //   .andWhere('blog.topic_id IN (:...topicIds)', {
+      //     topicIds: topics.map((topic) => topic.topic_id),
+      //   })
+      //   .orderBy('blog.createdAt', 'DESC') // Order by createdAt
+      //   .skip((page - 1) * limit) // Skip the first `skip` records
+      //   .take(limit) // Take up to `limit` records
+      //   .getMany();
       const blogs = await this.blogRepository
         .createQueryBuilder('blog')
+        .leftJoinAndSelect('blog.topic', 'topic')
         .where('blog.type = :type', {
           type: BlogType.PROJECT,
           isDeleted: false,
