@@ -46,7 +46,7 @@ export class BlogService {
     if (type === BlogType.COMPANY) {
       const blogs = await this.blogRepository.find({
         // relations: ['author', 'blog_section', 'blog_comment', 'topic'],
-        relations: ['author'],
+        // relations: ['author'],
         where: {
           type: BlogType.COMPANY,
           isDeleted: false,
