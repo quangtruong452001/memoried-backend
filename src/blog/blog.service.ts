@@ -39,7 +39,7 @@ export class BlogService {
   async getBlogs(
     type: BlogType,
     page: number = 1,
-    limit: number = 10,
+    limit: number = 5,
     user_id: string,
   ) {
     // If type is Company
@@ -75,6 +75,7 @@ export class BlogService {
         .createQueryBuilder('blog')
         .where('blog.type = :type', {
           type: BlogType.TEAM,
+          isDeleted: false,
         })
         .andWhere('blog.topic_id IN (:...topicIds)', {
           topicIds: topics.map((topic) => topic.topic_id),
@@ -104,6 +105,7 @@ export class BlogService {
         .createQueryBuilder('blog')
         .where('blog.type = :type', {
           type: BlogType.PROJECT,
+          isDeleted: false,
         })
         .andWhere('blog.topic_id IN (:...topicIds)', {
           topicIds: topics.map((topic) => topic.topic_id),
