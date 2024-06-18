@@ -51,6 +51,9 @@ export class BlogService {
           type: BlogType.COMPANY,
           isDeleted: false,
         },
+        order: {
+          createdAt: 'DESC',
+        },
         take: limit,
         skip: (page - 1) * limit,
       });
@@ -80,6 +83,7 @@ export class BlogService {
         .andWhere('blog.topic_id IN (:...topicIds)', {
           topicIds: topics.map((topic) => topic.topic_id),
         })
+        .orderBy('blog.createdAt', 'DESC') // Order by createdAt
         .skip((page - 1) * limit) // Skip the first `skip` records
         .take(limit) // Take up to `limit` records
         .getMany();
@@ -110,6 +114,7 @@ export class BlogService {
         .andWhere('blog.topic_id IN (:...topicIds)', {
           topicIds: topics.map((topic) => topic.topic_id),
         })
+        .orderBy('blog.createdAt', 'DESC') // Order by createdAt
         .skip((page - 1) * limit) // Skip the first `skip` records
         .take(limit) // Take up to `limit` records
         .getMany();
