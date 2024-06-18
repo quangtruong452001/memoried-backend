@@ -54,7 +54,7 @@ export class BlogController {
     return this.blogService.getBlogsByType(blog_type);
   }
 
-  @Get('getbyblog')
+  @Get('getbyBlogId')
   getBlogById(@Query('blog_id') blog_id: string) {
     return this.blogService.getBlogById(blog_id);
   }

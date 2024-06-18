@@ -86,9 +86,9 @@ export class AuthService {
       const userId = decodedToken.user_id;
 
       // Check if token has expired
-      if (decodedToken.exp && Date.now() >= decodedToken.exp * 1000) {
-        throw new Error('Token has expired');
-      }
+      // if (decodedToken.exp && Date.now() >= decodedToken.exp * 1000) {
+      //   throw new Error('Token has expired');
+      // }
 
       // Update the refreshTokenHashed field in the database
       const logoutUser = await this.userService.updateUser(userId, {
@@ -143,7 +143,7 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('AT_SECRET'),
-        expiresIn: '1d',
+        expiresIn: '1s',
       }),
 
       this.jwtService.signAsync(payload, {
