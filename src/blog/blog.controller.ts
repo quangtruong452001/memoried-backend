@@ -11,6 +11,7 @@ import {
 import { BlogService } from './blog.service';
 import { BlogDto, BlogType } from 'src/database/dto/blog.dto';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
+import { getInfoData } from 'src/utils';
 
 @Controller('blog')
 export class BlogController {
@@ -24,7 +25,7 @@ export class BlogController {
   }
 
   @Get()
-  getBlogs(
+  async getBlogs(
     @GetCurrentUserId() user_id: string,
     @Query('type') type: string,
     @Query('page') page: number,
@@ -35,7 +36,17 @@ export class BlogController {
       return new BadRequestException('Missing required query parameters');
     }
     const blogType = type as BlogType;
-    return this.blogService.getBlogs(blogType, page, limit, user_id);
+    const blogs = await this.blogService.getBlogs(
+      blogType,
+      page,
+      limit,
+      user_id,
+    );
+
+    return getInfoData({
+      fields: ['id', 'title', 'description', 'thumbnail', 'type', 'createdAt'],
+      object: blogs,
+    });
   }
 
   @Get('getbytype')
