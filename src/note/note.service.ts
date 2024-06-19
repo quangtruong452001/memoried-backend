@@ -15,7 +15,7 @@ export class NoteService {
   async getNotesOfUser(user_id: string, page: number = 1, limit: number = 5) {
     const notes = await this.noteRepository
       .createQueryBuilder('note')
-      .leftJoinAndSelect('note.user', 'user')
+      .leftJoinAndSelect('note.section', 'section')
       .where('user.id = :userId', {
         userId: user_id,
         isDeleted: false,
