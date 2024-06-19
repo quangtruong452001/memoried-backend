@@ -12,6 +12,22 @@ export class NoteService {
     private manager: EntityManager,
   ) {}
 
+  async getNotesOfUser(user_id: string, page: number = 1, limit: number = 5) {
+    const notes = await this.noteRepository
+      .createQueryBuilder('note')
+      .leftJoinAndSelect('note.user', 'user')
+      .where('user.id = :userId', {
+        userId: user_id,
+        isDeleted: false,
+      })
+      .skip((page - 1) * limit)
+      .take(limit)
+      .orderBy('note.createdAt', 'DESC')
+      .getMany();
+
+    return notes;
+  }
+
   async createNote(section_id: string, current_user_id: string): Promise<Note> {
     const note = await this.noteRepository
       .createQueryBuilder('note')

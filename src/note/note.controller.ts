@@ -23,9 +23,21 @@ export class NoteController {
     return this.noteService.createNote(section_id, current_user_id);
   }
 
+  // @Get()
+  // getNoteByUserId(@Query('user_id') user_id: string) {
+  //   return this.noteService.getNotesBySectionId(user_id);
+  // }
+
   @Get()
-  getNoteByUserId(@Query('user_id') user_id: string) {
-    return this.noteService.getNotesBySectionId(user_id);
+  getNotesOfUser(
+    @GetCurrentUserId() user_id: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    if (!user_id) {
+      throw new Error('User not logged in');
+    }
+    return this.noteService.getNotesOfUser(user_id, page, limit);
   }
 
   @Patch('delete')
