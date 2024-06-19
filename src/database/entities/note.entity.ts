@@ -13,7 +13,7 @@ import { User } from './user.entity';
 import { AbstractEntity } from './abstract.entity';
 
 @Entity()
-export class Note extends AbstractEntity<Section> {
+export class Note extends AbstractEntity<Note> {
   @PrimaryColumn({ type: 'uuid' })
   section_id: string;
 
@@ -22,7 +22,7 @@ export class Note extends AbstractEntity<Section> {
 
   @ManyToOne(() => Section, (section) => section.section_note)
   @JoinColumn({ name: 'section_id' })
-  section: Section;
+  section: string;
 
   @ManyToOne(() => User, (user) => user.user_note)
   @JoinColumn({ name: 'user_id' })

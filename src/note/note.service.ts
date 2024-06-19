@@ -16,7 +16,7 @@ export class NoteService {
     const notes = await this.noteRepository
       .createQueryBuilder('note')
       .leftJoinAndSelect('note.section', 'section')
-      .where('user_id = :userId', {
+      .where('note.user_id = :userId and note.isDeleted = :isDeleted', {
         userId: user_id,
         isDeleted: false,
       })
@@ -69,14 +69,13 @@ export class NoteService {
   async deleteNote(noteDto: NoteDto) {
     const note = await this.noteRepository
       .createQueryBuilder('note')
-      .leftJoinAndSelect('note.user', 'user')
-      .where('section.id = :sectionId , user.id = :userId', {
+      .where('user_id = :userId AND section_id = :sectionId', {
         userId: noteDto.user_id,
         sectionId: noteDto.section_id,
       })
       .getOne();
     if (!note) {
-      throw new Error('Image not found');
+      throw new Error('Note not found');
     }
     note.isDeleted = true;
     return await this.noteRepository.save(note);

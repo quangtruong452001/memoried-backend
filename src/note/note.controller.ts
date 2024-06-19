@@ -41,7 +41,11 @@ export class NoteController {
   }
 
   @Patch('delete')
-  deleteImage(@Body(new ValidationPipe({ transform: true })) noteDto: NoteDto) {
-    return this.noteService.deleteNote(noteDto);
+  deleteImage(
+    @GetCurrentUserId() user_id: string,
+    @Query('section_id') section_id: string,
+  ) {
+    const tmp: NoteDto = { user_id, section_id };
+    return this.noteService.deleteNote(tmp);
   }
 }
