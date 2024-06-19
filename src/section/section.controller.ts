@@ -14,7 +14,7 @@ import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
 @Controller('section')
 export class SectionController {
   constructor(private readonly sectionService: SectionService) {}
-  @Post()
+  @Post('create')
   createSection(
     @Body(new ValidationPipe({ transform: true })) section: SectionDto,
     @GetCurrentUserId() current_user_id: string,

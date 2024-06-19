@@ -9,23 +9,27 @@ import {
   BadRequestException,
   UploadedFile,
   UseInterceptors,
+  Res,
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { BlogDto, BlogType, CreateBlogDto } from 'src/database/dto/blog.dto';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
 import { convertImageToBase64, getInfoData } from 'src/utils';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 
 @Controller('blog')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
   @Post('create')
   @UseInterceptors(FileInterceptor('thumbnail'))
-  createBlog(
+  async createBlog(
     @Body(new ValidationPipe({ transform: true })) blog: CreateBlogDto,
     @UploadedFile() file: Express.Multer.File,
     @GetCurrentUserId() current_user_id: string,
+    @Res() res: Response,
   ) {
+    console.log('Check data', blog);
     if (!blog) {
       return 'Blog Information is required.';
     }
@@ -38,7 +42,13 @@ export class BlogController {
       ...blog,
       thumbnail: avatarBase64,
     };
-    return this.blogService.createBlog(blogDto, current_user_id);
+    const newBlog = await this.blogService.createBlog(blogDto, current_user_id);
+    if (newBlog) {
+      res.send({
+        data: newBlog,
+        message: 'Blog created successfully',
+      });
+    }
   }
 
   @Get()

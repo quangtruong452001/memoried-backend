@@ -35,7 +35,6 @@ export class BlogDto {
   author: string;
 
   @ValidateIf((o) => o.type === BlogType.PROJECT || o.type === BlogType.TEAM)
-  @IsNotEmpty()
   @IsUUID()
   topic_id: string;
 }
