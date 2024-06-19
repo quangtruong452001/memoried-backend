@@ -16,7 +16,7 @@ export class NoteService {
     const notes = await this.noteRepository
       .createQueryBuilder('note')
       .leftJoinAndSelect('note.section', 'section')
-      .where('user.id = :userId', {
+      .where('user_id = :userId', {
         userId: user_id,
         isDeleted: false,
       })
