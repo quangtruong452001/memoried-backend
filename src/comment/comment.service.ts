@@ -16,6 +16,7 @@ export class CommentService {
     const newComment = new Comment(comment);
     newComment.createdBy = current_user_id;
     newComment.updatedBy = current_user_id;
+    newComment.user = current_user_id;
     return await this.commentRepository.save(newComment);
   }
 
