@@ -36,7 +36,7 @@ export class BlogDto {
 
   @ValidateIf((o) => o.type === BlogType.PROJECT || o.type === BlogType.TEAM)
   @IsUUID()
-  topic_id: string;
+  topic: string;
 }
 export class CreateBlogDto {
   title: string;
@@ -45,5 +45,5 @@ export class CreateBlogDto {
 
   description: string;
 
-  topic_id: string;
+  topic: string;
 }

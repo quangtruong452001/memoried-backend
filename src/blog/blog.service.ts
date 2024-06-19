@@ -4,6 +4,7 @@ import { Blog } from 'src/database/entities/blog.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { BlogDto, BlogType } from 'src/database/dto/blog.dto';
 import { UserTopicService } from 'src/user-topic/user-topic.service';
+import { title } from 'process';
 @Injectable()
 export class BlogService {
   constructor(
@@ -14,6 +15,19 @@ export class BlogService {
   ) {}
 
   async createBlog(blogDTO: BlogDto, user_id: string) {
+    if (blogDTO.type == 'company') {
+      const blogtmp = {
+        title: blogDTO.title,
+        description: blogDTO.description,
+        type: blogDTO.type,
+        isDeleted: false,
+        thumbnail: blogDTO.thumbnail,
+        author: blogDTO.author,
+        topic: null,
+      };
+      blogDTO = blogtmp;
+    }
+
     const newBlog = new Blog(blogDTO);
     newBlog.createdBy = user_id;
     newBlog.updatedBy = user_id;
