@@ -17,7 +17,7 @@ export class CommentController {
   }
 
   @Get('getbyblog')
-  getCommentsByBlogId(@Query() blog_id: string) {
+  getCommentsByBlogId(@Query('blog_id') blog_id: string) {
     return this.commentService.getCommentsByBlogId(blog_id);
   }
 

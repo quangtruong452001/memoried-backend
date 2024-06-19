@@ -20,12 +20,17 @@ export class CommentService {
   }
 
   async getCommentsByBlogId(blog_id: string) {
-    return await this.commentRepository.find({
-      where: {
-        blog: blog_id,
+    const comments = await this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.blog', 'blog')
+      .where('blog.id = :blogId', {
+        blogId: blog_id,
         isDeleted: false,
-      },
-    });
+      })
+      .orderBy('comment.createdAt', 'ASC')
+      .getMany();
+
+    return comments;
   }
 
   async updateComment(

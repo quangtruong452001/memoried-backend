@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from 'src/database/dto';
 import { Body, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
@@ -28,5 +28,10 @@ export class UserController {
       fields: ['username', 'id', 'avatar', 'role'],
       object: user,
     });
+  }
+
+  @Get()
+  async getUsers(@Query('user_id') user_id: string) {
+    return await this.userService.getUserById(user_id);
   }
 }
