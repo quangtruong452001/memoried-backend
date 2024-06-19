@@ -17,10 +17,10 @@ export class NoteController {
 
   @Post()
   createNote(
-    @Body(new ValidationPipe({ transform: true })) note: NoteDto,
+    @Body('section_id') section_id: string,
     @GetCurrentUserId() current_user_id: string,
   ) {
-    return this.noteService.createNote(note, current_user_id);
+    return this.noteService.createNote(section_id, current_user_id);
   }
 
   @Get()
