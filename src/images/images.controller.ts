@@ -24,6 +24,7 @@ export class ImagesController {
     @Body('section_id') section_id: string,
     @GetCurrentUserId() current_user_id: string,
   ) {
+    console.log('Check id', section_id);
     return this.imagesService.uploadImage(files, section_id, current_user_id);
   }
 

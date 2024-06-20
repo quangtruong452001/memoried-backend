@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { Section } from 'src/database/entities/section.entity';
 import { SectionDto } from 'src/database/dto/section.dto';
+import { Blog } from 'src/database/entities/blog.entity';
 
 @Injectable()
 export class SectionService {
@@ -13,9 +14,19 @@ export class SectionService {
   ) {}
 
   async createSection(section: SectionDto, current_user_id: string) {
-    const newSection = new Section(section);
-    newSection.createdBy = current_user_id;
-    newSection.updatedBy = current_user_id;
+    const blog = await this.manager.findOne(Blog, {
+      where: { id: section.blog_id },
+    });
+
+    if (!blog) {
+      throw new Error('Blog not found');
+    }
+    const newSection = new Section({
+      caption: section.caption,
+      blog: blog, // Assign the blog entity
+      createdBy: current_user_id,
+      updatedBy: current_user_id,
+    });
     return await this.manager.save(newSection);
   }
 

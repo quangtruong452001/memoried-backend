@@ -29,7 +29,6 @@ export class BlogController {
     @GetCurrentUserId() current_user_id: string,
     @Res() res: Response,
   ) {
-    console.log('Check data', blog);
     if (!blog) {
       return 'Blog Information is required.';
     }

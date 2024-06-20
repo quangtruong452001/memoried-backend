@@ -6,6 +6,7 @@ import {
   Controller,
   Query,
   ValidationPipe,
+  Delete,
 } from '@nestjs/common';
 import { SectionService } from './section.service';
 import { SectionDto } from 'src/database/dto/section.dto';
@@ -16,7 +17,7 @@ export class SectionController {
   constructor(private readonly sectionService: SectionService) {}
   @Post('create')
   createSection(
-    @Body(new ValidationPipe({ transform: true })) section: SectionDto,
+    @Body() section: SectionDto,
     @GetCurrentUserId() current_user_id: string,
   ) {
     return this.sectionService.createSection(section, current_user_id);
@@ -45,7 +46,7 @@ export class SectionController {
     );
   }
 
-  @Patch('delete')
+  @Delete('delete')
   deleteSection(@Query('section_id') section_id: string) {
     return this.sectionService.deleteSection(section_id);
   }
