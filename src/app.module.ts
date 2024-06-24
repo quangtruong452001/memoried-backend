@@ -27,7 +27,9 @@ import { CommentModule } from './comment/comment.module';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
-      entities: entities,
+      // entities: entities,
+      entities: ['dist/**/*.entity{.ts,.js}'],
+
       //synchronize: true,
       ssl: {
         rejectUnauthorized: false,

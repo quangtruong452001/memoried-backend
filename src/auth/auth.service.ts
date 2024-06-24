@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
@@ -24,72 +25,77 @@ export class AuthService {
   ) {}
 
   async signUp(user: AuthDto, avatar?: string) {
-    // Check if the username already used
-    const existingUser = await this.userService.getUserByUsername(
-      user.username,
-    );
+    try {
+      // Check if the username already used
+      const existingUser = await this.userService.getUserByUsername(
+        user.username,
+      );
 
-    if (existingUser) {
-      throw new BadRequestException('Username already exists');
+      if (existingUser) {
+        throw new BadRequestException('Username already exists');
+      }
+
+      // Hash the password
+      const hashedPassword = await argon.hash(user.password);
+
+      // Create a new user
+      const newUser: UserOptionalDto = await this.userService.createUser({
+        username: user.username,
+        password: hashedPassword,
+        avatar: avatar ? avatar : defaultAvatar,
+      });
+
+      // Create a new token
+      // const tokens = await this.getToken(newUser.id, newUser.username);
+
+      // Update the refresh token hash
+      // await this.updateRefreshTokenHash(newUser.id, tokens.refreshToken);
+      // return tokens;
+
+      return newUser;
+    } catch (error) {
+      throw new BadRequestException('Error creating user');
     }
-
-    // Hash the password
-    const hashedPassword = await argon.hash(user.password);
-
-    // Create a new user
-    const newUser: UserOptionalDto = await this.userService.createUser({
-      username: user.username,
-      password: hashedPassword,
-      avatar: avatar ? avatar : defaultAvatar,
-    });
-
-    // Create a new token
-    // const tokens = await this.getToken(newUser.id, newUser.username);
-
-    // Update the refresh token hash
-    // await this.updateRefreshTokenHash(newUser.id, tokens.refreshToken);
-    // return tokens;
-
-    return newUser;
   }
 
   async signIn(user: AuthDto) {
-    // Check if the user exists
-    const existingUser = await this.userService.getUserByUsername(
-      user.username,
-    );
+    try {
+      // Check if the user exists
+      const existingUser = await this.userService.getUserByUsername(
+        user.username,
+      );
 
-    if (!existingUser) {
-      throw new BadRequestException('User not registered');
+      if (!existingUser) {
+        throw new BadRequestException('User not registered');
+      }
+
+      // Check if the password is correct
+      const pwMatched = await argon.verify(
+        existingUser.password,
+        user.password,
+      );
+
+      // If the password is incorrect throw an error
+      if (!pwMatched) {
+        throw new ForbiddenException('Incorrect password');
+      }
+
+      // Create a new token
+      const tokens = await this.getToken(
+        existingUser.id,
+        existingUser.username,
+      );
+
+      // Update the refresh token hash
+      await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
+      return tokens;
+    } catch (error) {
+      throw new BadRequestException('Error signing in');
     }
-
-    // Check if the password is correct
-    const pwMatched = await argon.verify(existingUser.password, user.password);
-
-    // If the password is incorrect throw an error
-    if (!pwMatched) {
-      throw new ForbiddenException('Incorrect password');
-    }
-
-    // Create a new token
-
-    const tokens = await this.getToken(existingUser.id, existingUser.username);
-
-    // Update the refresh token hash
-    await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
-    return tokens;
   }
 
-  async logOut(accessToken: string) {
+  async logOut(userId: string) {
     try {
-      const decodedToken = this.jwtService.verify(accessToken); // Verify and decode the JWT
-      const userId = decodedToken.user_id;
-
-      // Check if token has expired
-      // if (decodedToken.exp && Date.now() >= decodedToken.exp * 1000) {
-      //   throw new Error('Token has expired');
-      // }
-
       // Update the refreshTokenHashed field in the database
       const logoutUser = await this.userService.updateUser(userId, {
         refreshTokenHashed: '',
@@ -98,40 +104,46 @@ export class AuthService {
       if (logoutUser) {
         return logoutUser;
       } else {
-        throw new Error('User not found or unable to update');
+        throw new NotFoundException('User not found or unable to update');
       }
     } catch (error) {
-      console.error('Error during logout:', error.message);
-      throw new Error('Invalid token or unable to log out');
+      throw new BadRequestException('Invalid token or unable to log out');
     }
   }
 
   async handleRefreshToken(userId: string, refreshToken: string) {
-    // Check if the user exists
-    const existingUser = await this.userService.getUserById(userId);
+    try {
+      // Check if the user exists
+      const existingUser = await this.userService.getUserById(userId);
 
-    if (!existingUser) {
-      throw new BadRequestException('User not registered');
+      if (!existingUser) {
+        throw new BadRequestException('User not registered');
+      }
+
+      // Check if the refresh token is correct
+      const rtMatched = await argon.verify(
+        existingUser.refreshTokenHashed,
+        refreshToken,
+      );
+
+      // If the refresh token is incorrect throw an error
+      if (!rtMatched) {
+        throw new ForbiddenException('Incorrect refresh token');
+      }
+
+      // Create a new token
+      const tokens = await this.getToken(
+        existingUser.id,
+        existingUser.username,
+      );
+
+      // Update the refresh token hash
+      await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
+
+      return tokens;
+    } catch (error) {
+      throw new BadRequestException('Error handling refresh token');
     }
-
-    // Check if the refresh token is correct
-    const rtMatched = await argon.verify(
-      existingUser.refreshTokenHashed,
-      refreshToken,
-    );
-
-    // If the refresh token is incorrect throw an error
-    if (!rtMatched) {
-      throw new ForbiddenException('Incorrect refresh token');
-    }
-
-    // Create a new token
-    const tokens = await this.getToken(existingUser.id, existingUser.username);
-
-    // Update the refresh token hash
-    await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
-
-    return tokens;
   }
 
   async getToken(user_id: string, username: string) {
@@ -156,7 +168,11 @@ export class AuthService {
   }
 
   async updateRefreshTokenHash(user_id: string, rt: string) {
-    const hash = await argon.hash(rt);
-    await this.userService.updateUser(user_id, { refreshTokenHashed: hash });
+    try {
+      const hash = await argon.hash(rt);
+      await this.userService.updateUser(user_id, { refreshTokenHashed: hash });
+    } catch (error) {
+      throw new BadRequestException('Error updating refresh token hash');
+    }
   }
 }

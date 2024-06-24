@@ -39,11 +39,20 @@ export class BlogDto {
   topic: string;
 }
 export class CreateBlogDto {
+  @IsString()
+  @Length(5, 155)
   title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(BlogType)
   type: BlogType;
 
+  @IsString()
+  @Length(5, 155)
   description: string;
 
+  @ValidateIf((o) => o.type === BlogType.PROJECT || o.type === BlogType.TEAM)
+  @IsUUID()
   topic: string;
 }

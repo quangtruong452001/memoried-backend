@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { Images } from 'src/database/entities/images.entity';
@@ -19,10 +23,14 @@ export class ImagesService {
     imageDto: ImageDto,
     current_user_id: string,
   ): Promise<Images> {
-    const newImage = new Images(imageDto);
-    newImage.createdBy = current_user_id;
-    newImage.updatedBy = current_user_id;
-    return await this.imageRepository.save(newImage);
+    try {
+      const newImage = new Images(imageDto);
+      newImage.createdBy = current_user_id;
+      newImage.updatedBy = current_user_id;
+      return await this.imageRepository.save(newImage);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async uploadImage(
@@ -33,44 +41,56 @@ export class ImagesService {
     if (!files || !Array.isArray(files)) {
       throw new Error('No files provided or files is not an array.');
     }
-    const uploadPromises = files.map((file) => {
-      return new Promise<string>((resolve, reject) => {
-        const upload = v2.uploader.upload_stream((error, result) => {
-          if (error) return reject(error);
-          var image = new ImageDto();
-          image.url = result.url;
-          image.section = section_id;
-          this.createImage(image, current_user_id);
-          resolve('Image uploaded successfully');
+    try {
+      const uploadPromises = files.map((file) => {
+        return new Promise<string>((resolve, reject) => {
+          const upload = v2.uploader.upload_stream((error, result) => {
+            if (error) return reject(error);
+            const image = new ImageDto();
+            image.url = result.url;
+            image.section = section_id;
+            this.createImage(image, current_user_id);
+            resolve('Image uploaded successfully');
+          });
+          toStream(file.buffer).pipe(upload);
         });
-        toStream(file.buffer).pipe(upload);
       });
-    });
-    return Promise.all(uploadPromises);
+      return Promise.all(uploadPromises);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async getImagesBySectionId(section_id: string) {
-    const images = await this.imageRepository
-      .createQueryBuilder('image')
-      .leftJoinAndSelect('image.section', 'section')
-      .where('section.id = :sectionId', {
-        sectionId: section_id,
-        isDeleted: false,
-      })
-      .getMany();
-    return images.map((image) => image.url);
+    try {
+      const images = await this.imageRepository
+        .createQueryBuilder('image')
+        .leftJoinAndSelect('image.section', 'section')
+        .where('section.id = :sectionId AND section.isDeleted = :isDeleted', {
+          sectionId: section_id,
+          isDeleted: false,
+        })
+        .getMany();
+      return images.map((image) => image.url);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async deleteImage(image_id: string) {
-    const image = await this.imageRepository.findOne({
-      where: {
-        id: image_id,
-      },
-    });
-    if (!image) {
-      throw new Error('Image not found');
+    try {
+      const image = await this.imageRepository.findOne({
+        where: {
+          id: image_id,
+        },
+      });
+      if (!image) {
+        throw new NotFoundException('Image not found');
+      }
+      image.isDeleted = true;
+      return await this.manager.save(image);
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-    image.isDeleted = true;
-    return await this.manager.save(image);
   }
 }

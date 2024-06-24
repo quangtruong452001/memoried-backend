@@ -1,24 +1,23 @@
 import { GetCurrentUserInfo } from './../decorators/getCurrentUserInfo.decorator';
 import {
+  BadRequestException,
   Body,
   Controller,
   HttpCode,
   HttpStatus,
   Post,
-  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from 'src/database/dto';
-import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { convertImageToBase64 } from 'src/utils';
 import { Public } from 'src/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
 import { RefreshTokenGuard } from './guard';
+import { Created, SuccessResponse } from 'src/core/success.response';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -30,47 +29,26 @@ export class AuthController {
   async signUp(
     @Body() dto: AuthDto,
     @UploadedFile() file: Express.Multer.File,
-    @Res() res: Response,
   ) {
-    if (!dto) {
-      return 'Username and password are required.';
-    }
     let avatarBase64 = null;
     if (file) {
       avatarBase64 = convertImageToBase64(file);
     }
-    // const { accessToken, refreshToken } = await this.authService.signUp(
-    //   dto,
-    //   avatarBase64,
-    // );
-    // res.cookie('Authentication', accessToken, { httpOnly: true });
-    // res.cookie('Refresh', refreshToken, { httpOnly: true });
-
-    const newUser = await this.authService.signUp(dto, avatarBase64);
-    if (newUser) {
-      res.send({
-        message: 'User created successfully',
-      });
-    }
+    return new Created({
+      message: 'User created',
+      metadata: await this.authService.signUp(dto, avatarBase64),
+    });
   }
 
   @Public()
   @Post('signin')
   @HttpCode(HttpStatus.OK)
-  async signIn(@Body() dto: AuthDto, @Res() res: Response) {
-    if (!dto) {
-      return 'Username and password are required.';
-    }
+  async signIn(@Body() dto: AuthDto) {
     // Check if the access token exists from the request
-    // get form the header
-    // const access =
 
     const { accessToken, refreshToken } = await this.authService.signIn(dto);
-    res.cookie('Authentication', accessToken, { httpOnly: true });
-    res.cookie('Refresh', refreshToken, { httpOnly: true });
-
-    res.send({
-      message: 'User logged in',
+    return new SuccessResponse({
+      message: 'User signed in',
       metadata: {
         accessToken,
         refreshToken,
@@ -80,26 +58,22 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logOut(@Headers('authorization') authHeader: string) {
+  async logOut(@GetCurrentUserId() userId: string) {
     // Check user id
-    if (!authHeader) {
-      return { message: 'Authorization header is required' };
-    }
-    const accessToken = authHeader.split(' ')[1]; // Assuming the token is in the "Authorization" header as "Bearer TOKEN"
-    if (!accessToken) {
-      return { message: 'Access token is required' };
+    if (!userId) {
+      return new BadRequestException('User id is required');
     }
 
-    const userLogout = await this.authService.logOut(accessToken);
+    const userLogout = await this.authService.logOut(userId);
     if (userLogout) {
-      return {
+      return new SuccessResponse({
         message: 'User logged out',
-        // metadata: {
-        //   userLogout,
-        // },
-      };
+        metadata: {
+          delRefreshToken: userLogout.refreshTokenHashed,
+        },
+      });
     } else {
-      return { message: 'Logout failed' };
+      return new BadRequestException('User Logout failed');
     }
   }
 
@@ -111,6 +85,9 @@ export class AuthController {
     @GetCurrentUserId() userId: string,
     @GetCurrentUserInfo('refreshToken') refreshToken: string,
   ) {
-    return await this.authService.handleRefreshToken(userId, refreshToken);
+    return new SuccessResponse({
+      message: 'Refresh token success',
+      metadata: await this.authService.handleRefreshToken(userId, refreshToken),
+    });
   }
 }

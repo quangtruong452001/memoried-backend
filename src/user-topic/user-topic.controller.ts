@@ -4,36 +4,55 @@ import { Post, Body, Get } from '@nestjs/common';
 import { UserTopic } from 'src/database/entities/UserTopic.entity';
 import { ValidationPipe } from '@nestjs/common';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
+import { SuccessResponse } from 'src/core/success.response';
 
 @Controller('user-topic')
 export class UserTopicController {
   constructor(private readonly userTopicService: UserTopicService) {}
 
   @Post()
-  createNote(
+  async createNote(
     @Body(new ValidationPipe({ transform: true })) userTopicDto: UserTopic,
     @GetCurrentUserId() current_user_id: string,
   ) {
-    return this.userTopicService.createUserTopic(userTopicDto, current_user_id);
+    return new SuccessResponse({
+      message: 'Create user topic successfully',
+      metadata: await this.userTopicService.createUserTopic(
+        userTopicDto,
+        current_user_id,
+      ),
+    });
   }
 
   @Patch('delete')
-  deleteImage(
+  async deleteImage(
     @Body(new ValidationPipe({ transform: true })) userTopicDto: UserTopic,
   ) {
-    return this.userTopicService.deleteUserTopic(userTopicDto);
+    return new SuccessResponse({
+      message: 'Delete user topic successfully',
+      metadata: await this.userTopicService.deleteUserTopic(userTopicDto),
+    });
   }
 
   @Get()
-  getUserTopicIdByUserId(@GetCurrentUserId() current_user_id: string) {
-    return this.userTopicService.getTopicsByUserId(current_user_id);
+  async getUserTopicIdByUserId(@GetCurrentUserId() current_user_id: string) {
+    return new SuccessResponse({
+      message: 'Get user topic successfully',
+      metadata: await this.userTopicService.getTopicsByUserId(current_user_id),
+    });
   }
 
   @Get('getbytype')
-  getUserTopicsByType(
+  async getUserTopicsByType(
     @GetCurrentUserId() current_user_id: string,
     @Body() type: string,
   ) {
-    return this.userTopicService.getTopicsOfUser(current_user_id, type);
+    return new SuccessResponse({
+      message: 'Get user topic by type successfully',
+      metadata: await this.userTopicService.getTopicsOfUser(
+        current_user_id,
+        type,
+      ),
+    });
   }
 }

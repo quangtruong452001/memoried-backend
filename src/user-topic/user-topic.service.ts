@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { UserTopic } from 'src/database/entities/UserTopic.entity';
@@ -16,57 +16,80 @@ export class UserTopicService {
     userTopicDto: UserTopicDto,
     current_user_id: string,
   ): Promise<UserTopic> {
-    const userTopic = await this.userTopicRepository
-      .createQueryBuilder('userTopic')
-      .leftJoinAndSelect('userTopic.user', 'user')
-      .where('topic.id = :topicId , user.id = :userId', {
-        userId: userTopicDto.user_id,
-        sectionId: userTopicDto.topic_id,
-      })
-      .getOne();
-    if (!userTopic) {
-      const newUserTopic = new UserTopic(userTopicDto);
-      newUserTopic.createdBy = current_user_id;
-      newUserTopic.updatedBy = current_user_id;
-      return await this.userTopicRepository.save(newUserTopic);
+    try {
+      const userTopic = await this.userTopicRepository
+        .createQueryBuilder('userTopic')
+        .leftJoinAndSelect('userTopic.user', 'user')
+        .where('topic.id = :topicId , user.id = :userId', {
+          userId: userTopicDto.user_id,
+          sectionId: userTopicDto.topic_id,
+        })
+        .getOne();
+      if (!userTopic) {
+        const newUserTopic = new UserTopic(userTopicDto);
+        newUserTopic.createdBy = current_user_id;
+        newUserTopic.updatedBy = current_user_id;
+        return await this.userTopicRepository.save(newUserTopic);
+      }
+      userTopic.isDeleted = false;
+      userTopic.updatedBy = current_user_id;
+      userTopic.createdBy = current_user_id;
+      return await this.userTopicRepository.save(userTopic);
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-    userTopic.isDeleted = false;
-    userTopic.updatedBy = current_user_id;
-    userTopic.createdBy = current_user_id;
-    return await this.userTopicRepository.save(userTopic);
   }
 
   async getUserTopics() {
-    return await this.userTopicRepository.find({ where: { isDeleted: false } });
+    try {
+      return await this.userTopicRepository.find({
+        where: { isDeleted: false },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async deleteUserTopic(userTopicDto: UserTopicDto) {
-    const userTopic = await this.userTopicRepository
-      .createQueryBuilder('userTopic')
-      .leftJoinAndSelect('userTopic.user', 'user')
-      .where('topic.id = :topicId , user.id = :userId', {
-        userId: userTopicDto.user_id,
-        sectionId: userTopicDto.topic_id,
-      })
-      .getOne();
-    if (!userTopic) {
-      throw new Error('Image not found');
+    try {
+      const userTopic = await this.userTopicRepository
+        .createQueryBuilder('userTopic')
+        .leftJoinAndSelect('userTopic.user', 'user')
+        .where('topic.id = :topicId , user.id = :userId', {
+          userId: userTopicDto.user_id,
+          sectionId: userTopicDto.topic_id,
+        })
+        .getOne();
+      if (!userTopic) {
+        throw new Error('Image not found');
+      }
+      userTopic.isDeleted = true;
+      return await this.userTopicRepository.save(userTopic);
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-    userTopic.isDeleted = true;
-    return await this.userTopicRepository.save(userTopic);
   }
 
   async getTopicsOfUser(userId: string, type: string) {
-    return await this.userTopicRepository
-      .createQueryBuilder('userTopic')
-      .where('userTopic.user_id = :userId', { userId }) // Filtering by user ID
-      .leftJoinAndSelect('userTopic.topic', 'topic') // Correctly joining with the 'topic' relation
-      .andWhere('topic.type = :type', { type }) // Filtering topics by type
-      .getMany();
+    try {
+      return await this.userTopicRepository
+        .createQueryBuilder('userTopic')
+        .where('userTopic.user_id = :userId', { userId }) // Filtering by user ID
+        .leftJoinAndSelect('userTopic.topic', 'topic') // Correctly joining with the 'topic' relation
+        .andWhere('topic.type = :type', { type }) // Filtering topics by type
+        .getMany();
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
+
   async getTopicsByUserId(userId: string) {
-    return await this.userTopicRepository.find({
-      where: { user_id: userId, isDeleted: false },
-    });
+    try {
+      return await this.userTopicRepository.find({
+        where: { user_id: userId, isDeleted: false },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

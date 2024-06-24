@@ -12,6 +12,7 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from './images.service';
 import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
+import { Created, SuccessResponse } from 'src/core/success.response';
 
 @Controller('images')
 export class ImagesController {
@@ -19,22 +20,35 @@ export class ImagesController {
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files'))
-  uploadImage(
+  async uploadImage(
     @UploadedFiles() files: Express.Multer.File[],
     @Body('section_id') section_id: string,
     @GetCurrentUserId() current_user_id: string,
   ) {
-    console.log('Check id', section_id);
-    return this.imagesService.uploadImage(files, section_id, current_user_id);
+    // console.log('Check id', section_id);
+    return new Created({
+      message: 'Images uploaded successfully',
+      metadata: await this.imagesService.uploadImage(
+        files,
+        section_id,
+        current_user_id,
+      ),
+    });
   }
 
   @Get()
-  getPicture(@Query('section_id') section_id: string) {
-    return this.imagesService.getImagesBySectionId(section_id);
+  async getPicture(@Query('section_id') section_id: string) {
+    return new SuccessResponse({
+      message: 'Images fetched successfully',
+      metadata: await this.imagesService.getImagesBySectionId(section_id),
+    });
   }
 
   @Patch('delete')
-  deleteImage(@Query('image_id') image_id: string) {
-    return this.imagesService.deleteImage(image_id);
+  async deleteImage(@Query('image_id') image_id: string) {
+    return new SuccessResponse({
+      message: 'Image deleted successfully',
+      metadata: await this.imagesService.deleteImage(image_id),
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { IsUUID, IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 export class TopicDto {
   @IsString()
   @IsNotEmpty()
