@@ -87,7 +87,10 @@ export class BlogController {
   }
 
   @Patch('delete')
-  deleteBlog(@Query('blog_id') blog_id: string) {
-    return this.blogService.deleteBlog(blog_id);
+  async deleteBlog(@Query('blog_id') blog_id: string) {
+    return new SuccessResponse({
+      message: 'Blog deleted successfully',
+      metadata: await this.blogService.deleteBlog(blog_id),
+    });
   }
 }
