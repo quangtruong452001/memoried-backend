@@ -24,7 +24,7 @@ export class CommentService {
       newComment.user = current_user_id;
       return await this.commentRepository.save(newComment);
     } catch (error) {
-      throw new BadRequestException('Error creating comment');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -42,7 +42,7 @@ export class CommentService {
 
       return comments;
     } catch (error) {
-      throw new BadRequestException('Error retrieving comments');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -64,7 +64,7 @@ export class CommentService {
       commentToUpdate.updatedBy = current_user_id;
       return await this.commentRepository.save(commentToUpdate);
     } catch (error) {
-      throw new BadRequestException('Error updating comment');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -81,7 +81,7 @@ export class CommentService {
       comment.isDeleted = true;
       return await this.manager.save(comment);
     } catch (error) {
-      throw new BadRequestException('Error deleting comment');
+      throw new BadRequestException(error.message);
     }
   }
 }
