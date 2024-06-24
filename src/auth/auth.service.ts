@@ -54,7 +54,7 @@ export class AuthService {
 
       return newUser;
     } catch (error) {
-      throw new BadRequestException('Error creating user');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -90,7 +90,7 @@ export class AuthService {
       await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
       return tokens;
     } catch (error) {
-      throw new BadRequestException('Error signing in');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -107,7 +107,7 @@ export class AuthService {
         throw new NotFoundException('User not found or unable to update');
       }
     } catch (error) {
-      throw new BadRequestException('Invalid token or unable to log out');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -142,7 +142,7 @@ export class AuthService {
 
       return tokens;
     } catch (error) {
-      throw new BadRequestException('Error handling refresh token');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -172,7 +172,7 @@ export class AuthService {
       const hash = await argon.hash(rt);
       await this.userService.updateUser(user_id, { refreshTokenHashed: hash });
     } catch (error) {
-      throw new BadRequestException('Error updating refresh token hash');
+      throw new BadRequestException(error.message);
     }
   }
 }
