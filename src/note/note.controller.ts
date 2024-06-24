@@ -17,9 +17,9 @@ import { Created, SuccessResponse } from 'src/core/success.response';
 export class NoteController {
   constructor(private readonly noteService: NoteService) {}
 
-  @Post()
+  @Post('addnote')
   async createNote(
-    @Body('section_id') section_id: string,
+    @Query('section_id') section_id: string,
     @GetCurrentUserId() current_user_id: string,
   ) {
     return new Created({
