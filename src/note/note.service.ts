@@ -33,7 +33,7 @@ export class NoteService {
       .createQueryBuilder('note')
       .leftJoinAndSelect('note.user', 'user')
       .leftJoinAndSelect('note.section', 'section')
-      .where('section.id = :sectionId AND user.id = :userId', {
+      .where('note.section.id = :sectionId AND note.user.id = :userId', {
         userId: current_user_id,
         sectionId: section_id,
       })

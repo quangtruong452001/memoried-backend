@@ -15,11 +15,12 @@ import { GetCurrentUserId } from 'src/decorators/getCurrentUserId.decorator';
 export class NoteController {
   constructor(private readonly noteService: NoteService) {}
 
-  @Post()
+  @Post('addnote')
   createNote(
-    @Body('section_id') section_id: string,
+    @Query('section_id') section_id: string,
     @GetCurrentUserId() current_user_id: string,
   ) {
+    console.log('section_id', section_id);
     return this.noteService.createNote(section_id, current_user_id);
   }
 
