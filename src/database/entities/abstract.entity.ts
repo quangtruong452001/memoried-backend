@@ -7,12 +7,6 @@ export class AbstractEntity<T> {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ nullable: false, type: 'uuid' })
-  createdBy: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  updatedBy: string;
-
   @Column({ nullable: true, type: 'boolean', default: false })
   isDeleted: boolean;
 

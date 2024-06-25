@@ -14,6 +14,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guard';
 import { TopicModule } from './topic/topic.module';
 import { UserTopicModule } from './user-topic/user-topic.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -26,8 +27,10 @@ import { UserTopicModule } from './user-topic/user-topic.module';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
-      entities: entities,
-      // synchronize: true,
+      // entities: entities,
+      entities: ['dist/**/*.entity{.ts,.js}'],
+
+      //synchronize: true,
       ssl: {
         rejectUnauthorized: false,
       },
@@ -40,6 +43,7 @@ import { UserTopicModule } from './user-topic/user-topic.module';
     NoteModule,
     TopicModule,
     UserTopicModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [

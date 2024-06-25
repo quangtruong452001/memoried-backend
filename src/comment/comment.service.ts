@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentDto } from 'src/database/dto/comment.dto';
 import { Comment } from 'src/database/entities/comment.entity';
 import { Repository, EntityManager } from 'typeorm';
+import { CommentsGateway } from './comment.gateway';
 
 @Injectable()
 export class CommentService {
@@ -10,22 +15,43 @@ export class CommentService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
     private manager: EntityManager,
+    private readonly commentsGateway: CommentsGateway,
   ) {}
 
   async createComment(comment: CommentDto, current_user_id: string) {
-    const newComment = new Comment(comment);
-    newComment.createdBy = current_user_id;
-    newComment.updatedBy = current_user_id;
-    return await this.commentRepository.save(newComment);
+    try {
+      const newComment = new Comment(comment);
+      newComment.createdBy = current_user_id;
+      newComment.updatedBy = current_user_id;
+      newComment.user.id = current_user_id;
+      const savedComment = await this.commentRepository.save(newComment);
+
+      // Phát sự kiện WebSocket khi có bình luận mới
+      this.commentsGateway.handleNewComment(savedComment);
+
+      return savedComment;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async getCommentsByBlogId(blog_id: string) {
-    return await this.commentRepository.find({
-      where: {
-        blog: blog_id,
-        isDeleted: false,
-      },
-    });
+    try {
+      const comments = await this.commentRepository
+        .createQueryBuilder('comment')
+        .leftJoinAndSelect('comment.blog', 'blog')
+        .leftJoinAndSelect('comment.user', 'user')
+        .where('blog.id = :blogId AND comment.isDeleted = :isDeleted', {
+          blogId: blog_id,
+          isDeleted: false,
+        })
+        .orderBy('comment.createdAt', 'ASC')
+        .getMany();
+
+      return comments;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async updateComment(
@@ -33,26 +59,37 @@ export class CommentService {
     comment: CommentDto,
     current_user_id: string,
   ) {
-    let commentToUpdate = await this.commentRepository.findOne({
-      where: {
-        id: comment_id,
-      },
-    });
-    commentToUpdate = { ...commentToUpdate, ...comment };
-    commentToUpdate.updatedBy = current_user_id;
-    return await this.commentRepository.save(commentToUpdate);
+    try {
+      let commentToUpdate = await this.commentRepository.findOne({
+        where: {
+          id: comment_id,
+        },
+      });
+      if (!commentToUpdate) {
+        throw new BadRequestException('Comment not found');
+      }
+      commentToUpdate = { ...commentToUpdate, ...comment };
+      commentToUpdate.updatedBy = current_user_id;
+      return await this.commentRepository.save(commentToUpdate);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async deleteComment(comment_id: string) {
-    const comment = await this.commentRepository.findOne({
-      where: {
-        id: comment_id,
-      },
-    });
-    if (!comment) {
-      throw new Error('Comment not found');
+    try {
+      const comment = await this.commentRepository.findOne({
+        where: {
+          id: comment_id,
+        },
+      });
+      if (!comment) {
+        throw new NotFoundException('Comment not found');
+      }
+      comment.isDeleted = true;
+      return await this.manager.save(comment);
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-    comment.isDeleted = true;
-    return await this.manager.save(comment);
   }
 }

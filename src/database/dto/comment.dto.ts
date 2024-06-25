@@ -9,8 +9,4 @@ export class CommentDto {
   @IsUUID()
   @IsNotEmpty()
   blog: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  user: string;
 }

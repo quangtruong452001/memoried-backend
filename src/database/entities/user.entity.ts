@@ -55,4 +55,10 @@ export class User extends AbstractEntity<User> {
 
   @OneToMany(() => UserTopic, (userTopic) => userTopic.user)
   user_userTopic: UserTopic[];
+
+  @Column({ nullable: true, type: 'uuid' })
+  createdBy: string;
+
+  @Column({ nullable: true, type: 'uuid' })
+  updatedBy: string;
 }

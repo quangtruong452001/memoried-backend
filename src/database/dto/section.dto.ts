@@ -7,5 +7,5 @@ export class SectionDto {
 
   @IsUUID()
   @IsNotEmpty()
-  blog: string;
+  blog_id: string;
 }
