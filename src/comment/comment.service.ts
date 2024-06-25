@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CommentDto } from 'src/database/dto/comment.dto';
 import { Comment } from 'src/database/entities/comment.entity';
 import { Repository, EntityManager } from 'typeorm';
+import { CommentsGateway } from './comment.gateway';
 
 @Injectable()
 export class CommentService {
@@ -14,6 +15,7 @@ export class CommentService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
     private manager: EntityManager,
+    private readonly commentsGateway: CommentsGateway,
   ) {}
 
   async createComment(comment: CommentDto, current_user_id: string) {
@@ -22,7 +24,12 @@ export class CommentService {
       newComment.createdBy = current_user_id;
       newComment.updatedBy = current_user_id;
       newComment.user = current_user_id;
-      return await this.commentRepository.save(newComment);
+      const savedComment = await this.commentRepository.save(newComment);
+
+      // Phát sự kiện WebSocket khi có bình luận mới
+      this.commentsGateway.handleNewComment(savedComment);
+
+      return savedComment;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -33,6 +40,7 @@ export class CommentService {
       const comments = await this.commentRepository
         .createQueryBuilder('comment')
         .leftJoinAndSelect('comment.blog', 'blog')
+        .leftJoinAndSelect('comment.user', 'user')
         .where('blog.id = :blogId AND comment.isDeleted = :isDeleted', {
           blogId: blog_id,
           isDeleted: false,
