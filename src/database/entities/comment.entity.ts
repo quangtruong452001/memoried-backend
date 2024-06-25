@@ -27,7 +27,7 @@ export class Comment extends AbstractEntity<Comment> {
 
   @ManyToOne(() => User, (user) => user.user_comment)
   @JoinColumn({ name: 'user_id' })
-  user: string;
+  user: User;
 
   @Column({ nullable: false, type: 'uuid' })
   createdBy: string;

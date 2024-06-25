@@ -23,7 +23,7 @@ export class CommentService {
       const newComment = new Comment(comment);
       newComment.createdBy = current_user_id;
       newComment.updatedBy = current_user_id;
-      newComment.user = current_user_id;
+      newComment.user.id = current_user_id;
       const savedComment = await this.commentRepository.save(newComment);
 
       // Phát sự kiện WebSocket khi có bình luận mới
