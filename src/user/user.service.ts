@@ -52,4 +52,18 @@ export class UserService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async searchUser(query: string) {
+    try {
+      const users = await this.userRepository
+        .createQueryBuilder('user')
+        .where('LOWER(user.username) LIKE LOWER(:searchTerm)', {
+          searchTerm: `%${query}%`,
+        })
+        .getMany();
+      return users;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
