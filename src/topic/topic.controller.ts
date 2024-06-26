@@ -4,6 +4,7 @@ import {
   Get,
   Patch,
   Post,
+  Query,
   ValidationPipe,
 } from '@nestjs/common';
 import { TopicService } from './topic.service';
@@ -15,7 +16,7 @@ import { SuccessResponse } from 'src/core/success.response';
 export class TopicController {
   constructor(private readonly topicService: TopicService) {}
 
-  @Post()
+  @Post('create')
   async createTopic(
     @Body(new ValidationPipe({ transform: true })) topicDto: TopicDto,
     @GetCurrentUserId() current_user_id: string,
@@ -31,6 +32,14 @@ export class TopicController {
     return new SuccessResponse({
       message: 'Get topics successfully',
       metadata: await this.topicService.getTopics(),
+    });
+  }
+
+  @Get('getbytype')
+  async getTopicByType(@Query('type') type: string) {
+    return new SuccessResponse({
+      message: 'Get topics by type successfully',
+      metadata: await this.topicService.getTopicByType(type),
     });
   }
 

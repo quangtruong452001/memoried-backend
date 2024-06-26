@@ -14,6 +14,16 @@ export class TopicService {
     private manager: EntityManager,
   ) {}
 
+  async getTopicByType(type: string) {
+    try {
+      return await this.topicRepository.find({
+        where: { type, isDeleted: false },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   async createTopic(topicDto: TopicDto, current_user_id: string) {
     try {
       const newTopic = new Topic(topicDto);

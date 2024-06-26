@@ -44,4 +44,12 @@ export class UserController {
       metadata: await this.userService.getUserById(user_id),
     });
   }
+
+  @Get('search')
+  async searchUser(@Query('query') query: string) {
+    return new SuccessResponse({
+      message: 'Get users not in topic successfully',
+      metadata: await this.userService.searchUser(query),
+    });
+  }
 }
