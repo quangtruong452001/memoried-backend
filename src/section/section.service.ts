@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { Section } from 'src/database/entities/section.entity';
@@ -51,8 +55,8 @@ export class SectionService {
         .leftJoinAndSelect('section.blog', 'blog')
         .where('blog.id = :blogId', {
           blogId: blog_id,
-          isDeleted: false,
         })
+        .andWhere('section.isDeleted = :isDeleted', { isDeleted: false })
         .orderBy('section.createdAt', 'ASC')
         .getMany();
 
@@ -89,7 +93,7 @@ export class SectionService {
         },
       });
       if (!section) {
-        throw new Error('Image not found');
+        throw new Error('Section not found');
       }
       section.isDeleted = true;
       return await this.manager.save(section);
