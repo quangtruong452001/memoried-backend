@@ -61,18 +61,28 @@ export class ImagesService {
     }
   }
 
-  async getImagesBySectionId(section_id: string) {
+  async getImagesBySectionId(
+    section_id: string,
+  ): Promise<{ id: string; url: string }[]> {
     try {
       const images = await this.imageRepository
         .createQueryBuilder('image')
         .leftJoinAndSelect('image.section', 'section')
-        .where('section.id = :sectionId AND section.isDeleted = :isDeleted', {
-          sectionId: section_id,
-          isDeleted: false,
+        .where('section.id = :sectionId', { sectionId: section_id })
+        .andWhere('section.isDeleted = :isDeleted', { isDeleted: false })
+        .andWhere('image.isDeleted = :imageIsDeleted', {
+          imageIsDeleted: false,
         })
         .getMany();
-      return images.map((image) => image.url);
+
+      console.log(images);
+
+      return images.map((image) => ({
+        id: image.id,
+        url: image.url,
+      }));
     } catch (error) {
+      console.error('Error fetching images:', error); // Add logging
       throw new BadRequestException(error.message);
     }
   }
