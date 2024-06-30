@@ -10,11 +10,13 @@ import { ImagesModule } from './images/images.module';
 import { SectionModule } from './section/section.module';
 import { BlogModule } from './blog/blog.module';
 import { NoteModule } from './note/note.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guard';
 import { TopicModule } from './topic/topic.module';
 import { UserTopicModule } from './user-topic/user-topic.module';
 import { CommentModule } from './comment/comment.module';
+import { LoggerService } from './logger/logger.service';
+import { LoggerInterceptor } from './logger/logger.interceptor';
 
 @Module({
   imports: [
@@ -48,10 +50,16 @@ import { CommentModule } from './comment/comment.module';
   controllers: [AppController],
   providers: [
     AppService,
+    LoggerService,
     {
       provide: APP_GUARD,
       useClass: AccessTokenGuard,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggerInterceptor,
+    },
   ],
+  exports: [LoggerService],
 })
 export class AppModule {}

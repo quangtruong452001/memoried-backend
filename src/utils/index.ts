@@ -10,3 +10,12 @@ export function convertImageToBase64(file: Express.Multer.File): string {
 export const getInfoData = ({ fields = [], object = {} }) => {
   return _.pick(object, fields);
 };
+
+export const logEvent = (msg: string) => {
+  const date = new Date().toISOString();
+  // format to dd/HH/YYYY ss:mm:hh
+  const formattedDate = date.replace(/T/, ' ').replace(/\..+/, '');
+
+  const content = `${formattedDate} - ${msg}\n`;
+  return content;
+};
