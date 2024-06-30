@@ -1,4 +1,4 @@
-import { Controller, Patch, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Patch, Query } from '@nestjs/common';
 import { UserTopicService } from './user-topic.service';
 import { Post, Body, Get } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common';
@@ -15,13 +15,22 @@ export class UserTopicController {
     @Body(new ValidationPipe({ transform: true })) userTopicDto: UserTopicDto,
     @GetCurrentUserId() current_user_id: string,
   ) {
-    return new SuccessResponse({
-      message: 'Create user topic successfully',
-      metadata: await this.userTopicService.addUserIntoTopic(
-        userTopicDto,
-        current_user_id,
-      ),
-    });
+    try {
+      return new SuccessResponse({
+        message: 'Create user topic successfully',
+        metadata: await this.userTopicService.addUserIntoTopic(
+          userTopicDto,
+          current_user_id,
+        ),
+      });
+    } catch (error) {
+      if (error.message) {
+        return new SuccessResponse({
+          message: 'User already added',
+        });
+      }
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Patch('delete')
