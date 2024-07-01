@@ -44,16 +44,18 @@ export class AuthController {
   @Post('signin')
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() dto: AuthDto) {
-    // Check if the access token exists from the request
-
-    const { accessToken, refreshToken } = await this.authService.signIn(dto);
-    return new SuccessResponse({
-      message: 'User signed in',
-      metadata: {
-        accessToken,
-        refreshToken,
-      },
-    });
+    try {
+      const { accessToken, refreshToken } = await this.authService.signIn(dto);
+      return new SuccessResponse({
+        message: 'User signed in',
+        metadata: {
+          accessToken,
+          refreshToken,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('logout')

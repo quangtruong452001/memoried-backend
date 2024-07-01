@@ -59,39 +59,30 @@ export class AuthService {
   }
 
   async signIn(user: AuthDto) {
-    try {
-      // Check if the user exists
-      const existingUser = await this.userService.getUserByUsername(
-        user.username,
-      );
+    // Check if the user exists
+    const existingUser = await this.userService.getUserByUsername(
+      user.username,
+    );
 
-      if (!existingUser) {
-        throw new BadRequestException('User not registered');
-      }
-
-      // Check if the password is correct
-      const pwMatched = await argon.verify(
-        existingUser.password,
-        user.password,
-      );
-
-      // If the password is incorrect throw an error
-      if (!pwMatched) {
-        throw new ForbiddenException('Incorrect password');
-      }
-
-      // Create a new token
-      const tokens = await this.getToken(
-        existingUser.id,
-        existingUser.username,
-      );
-
-      // Update the refresh token hash
-      await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
-      return tokens;
-    } catch (error) {
-      throw new BadRequestException(error.message);
+    if (!existingUser) {
+      throw new BadRequestException('User not registered');
     }
+
+    // Check if the password is correct
+    const pwMatched = await argon.verify(existingUser.password, user.password);
+
+    // If the password is incorrect throw an error
+    if (!pwMatched) {
+      throw new ForbiddenException('Incorrect password');
+    }
+
+    // Create a new token
+    const tokens = await this.getToken(existingUser.id, existingUser.username);
+
+    // Update the refresh token hash
+    await this.updateRefreshTokenHash(existingUser.id, tokens.refreshToken);
+
+    return tokens;
   }
 
   async logOut(userId: string) {
