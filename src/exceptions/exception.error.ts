@@ -7,6 +7,7 @@ import {
   BadRequestException,
   NotFoundException,
   ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { TokenExpiredError } from 'jsonwebtoken'; // Ensure this import matches where your TokenExpiredError is coming from
 
@@ -24,6 +25,22 @@ export class ErrorExceptionFilter implements ExceptionFilter {
         exception.message,
         exception.stack,
         'TokenExpiredError',
+      );
+
+      response.status(HttpStatus.UNAUTHORIZED).json({
+        status: HttpStatus.UNAUTHORIZED,
+        message: exception.message,
+        metaData: {
+          timestamp: new Date().toISOString(),
+          path: ctx.getRequest().url,
+        },
+      });
+    } else if (exception instanceof UnauthorizedException) {
+      // log the error
+      this.loggerService.error(
+        exception.message,
+        exception.stack,
+        'UnauthorizedException',
       );
 
       response.status(HttpStatus.UNAUTHORIZED).json({
